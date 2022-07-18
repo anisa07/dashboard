@@ -1,5 +1,7 @@
 export const Board = () => {
+    // TODO request selected board
+
     return (
-        <div></div>
+        <div>Test2</div>
     )
 }
