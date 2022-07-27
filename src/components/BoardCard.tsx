@@ -1,30 +1,50 @@
-import {Box} from "@chakra-ui/react";
+import {Box, Text, Flex} from "@chakra-ui/react";
 import {useDrag, useDrop} from "react-dnd";
-import {useRef} from "react";
+import {useRef, useState} from "react";
+import {useThemeHook} from "../hooks/useThemeHook";
+import {ViewIcon} from "@chakra-ui/icons";
+import { getDoneSubtasks } from "../helpers/helperFunc";
 
-export const COLUMN_NAMES = {
-    DO_IT: 'Do it',
-    IN_PROGRESS: 'In Progress',
-    AWAITING_REVIEW: 'Awaiting review',
-    DONE: 'Done',
-}
+export const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails}: any) => {
+    const ref = useRef(null);
 
-export const MovableItem = ({name, index, currentColumnName, moveCardHandler, setItems}: any) => {
-    const changeItemColumn = (currentItem: any, columnName: any) => {
-        setItems((prevState: any) => {
+    const changeColumn = (currentItem: any, columnId: string) => {
+        onUpdateBoard((prevState: any) => {
             return prevState.map((e: any) => {
-                return {
-                    ...e,
-                    column: e.name === currentItem.name ? columnName : e.column,
+                if (columnId === currentColumnId) {
+                    return e;
                 }
-            })
+                if (e.id === currentColumnId) {
+                    return {...e, cards: e.cards.filter((c: any) => c.id !== currentItem.id)}
+                }
+                if (e.id === columnId) {
+                    return {...e, cards: [...e.cards, currentItem]}
+                }
+                return {...e}
+            });
         });
     }
 
-    const ref = useRef(null);
+    const changePositionInColumn = (dragIndex: number, hoverIndex: number) => {
+        onUpdateBoard((prevState: any) => {
+            return prevState.map((e: any) => {
+                if (e.id === currentColumnId) {
+                    const copyCards = [...e.cards];
+                    if (dragIndex !== hoverIndex) {
+                        const removedItem = copyCards.splice(dragIndex, 1);
+                        copyCards.splice(hoverIndex, 0, removedItem[0]);
+                    }
+                    return {
+                        ...e, cards: copyCards
+                    };
+                }
+                return {...e}
+            });
+        });
+    }
 
     const [, drop] = useDrop({
-        accept: 'Our first type',
+        accept: 'card',
         hover(item: any, monitor) {
             if (!ref.current) {
                 return;
@@ -57,7 +77,8 @@ export const MovableItem = ({name, index, currentColumnName, moveCardHandler, se
                 return;
             }
             // Time to actually perform the action
-            moveCardHandler(dragIndex, hoverIndex);
+            // onMoveCard(dragIndex, hoverIndex, currentColumnId);
+            changePositionInColumn(dragIndex, hoverIndex);
             // Note: we're mutating the monitor item here!
             // Generally it's better to avoid mutations,
             // but it's good here for the sake of performance
@@ -67,30 +88,14 @@ export const MovableItem = ({name, index, currentColumnName, moveCardHandler, se
     });
 
     const [{isDragging}, drag] = useDrag({
-        type: 'Our first type',
-        item: {index, name, currentColumnName},
+        type: 'card',
+        item: {index, card, currentColumnId},
         end: (item, monitor) => {
             const dropResult: any = monitor.getDropResult();
 
             if (dropResult) {
-                const {name} = dropResult;
-                const {DO_IT, IN_PROGRESS, AWAITING_REVIEW, DONE} = COLUMN_NAMES;
-                switch (name) {
-                    case IN_PROGRESS:
-                        changeItemColumn(item, IN_PROGRESS);
-                        break;
-                    case AWAITING_REVIEW:
-                        changeItemColumn(item, AWAITING_REVIEW);
-                        break;
-                    case DONE:
-                        changeItemColumn(item, DONE);
-                        break;
-                    case DO_IT:
-                        changeItemColumn(item, DO_IT);
-                        break;
-                    default:
-                        break;
-                }
+                const {id} = dropResult;
+                changeColumn(card, id);
             }
         },
         collect: (monitor) => ({
@@ -98,19 +103,68 @@ export const MovableItem = ({name, index, currentColumnName, moveCardHandler, se
         }),
     });
 
-    const opacity = isDragging ? 0.4 : 1;
-
     drag(drop(ref));
 
+    const opacity = isDragging ? 0.1 : 1;
+
     return (
-        <div ref={ref} className='movable-item' style={{opacity}}>
-            {name}
-        </div>
+        <Box ref={ref} opacity={opacity}>
+            <BoardCard card={card} onOpenCardDetails={onOpenCardDetails}/>
+        </Box>
     )
+
 }
 
-export const BoardCard = ({name, id}: any) => {
+export const BoardCard = ({card, onOpenCardDetails}: any) => {
+    const {bg1} = useThemeHook();
+    const [mouseOver, setMouseOver] = useState(false);
+
+    const handleOnMouseEnter = () => {
+        setMouseOver(true);
+    }
+
+    const handleOnMouseLeave = () => {
+        setMouseOver(false);
+    }
+
+    const handleOpenCardDetails = () => {
+        onOpenCardDetails(card.id);
+    }
+
     return (
-        <Box border="1px solid" padding=".25rem">{name}</Box>
+        <Box sx={{
+            p: [2, 4],
+            backgroundColor: bg1,
+            mb: 3,
+            borderRadius: 5,
+            height: '7.5em'
+        }}>
+            <Flex
+                sx={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mb: 2,
+                    cursor: 'pointer'
+                }}
+                onClick={handleOpenCardDetails}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}>
+                <Text sx={{
+                    textDecoration: mouseOver ? 'underline' : 'none',
+                    fontWeight: 600,
+                    fontSize: 'sm',
+                }}>{card.name}</Text>
+                <ViewIcon
+                    sx={{
+                        opacity: mouseOver ? .75 : .1,
+                        w: 4,
+                        h: 4,
+                        ml: 1
+                    }}/>
+            </Flex>
+            <Text sx={{
+                fontSize: '.75em',
+            }}>{getDoneSubtasks(card.subtasks)} subtasks</Text>
+        </Box>
     )
 }

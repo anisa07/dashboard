@@ -1,44 +1,55 @@
-import { Box } from "@chakra-ui/react";
-import {BoardCard, COLUMN_NAMES} from "./BoardCard";
+import { Box, Text } from "@chakra-ui/react";
+import {MovableCard} from "./BoardCard";
 import {useDrop} from "react-dnd";
+import {useThemeHook} from "../hooks/useThemeHook";
 
-export const BoardColumn = ({children, className, title}: any) => {
+export const BoardColumn = ({column, onUpdateBoard, onOpenCardDetails}: any) => {
+    const {colorMode} = useThemeHook();
     const [{isOver, canDrop}, drop] = useDrop({
-        accept: 'Our first type',
-        drop: () => ({name: title}),
+        accept: 'card',
+        drop: () => ({id: column.id}),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-        // Override monitor.canDrop() function
-        canDrop: (item: any) => {
-            const {DO_IT, IN_PROGRESS, AWAITING_REVIEW, DONE} = COLUMN_NAMES;
-            const {currentColumnName} = item;
-            return (currentColumnName === title) ||
-                (currentColumnName === DO_IT && title === IN_PROGRESS) ||
-                (currentColumnName === IN_PROGRESS && (title === DO_IT || title === AWAITING_REVIEW)) ||
-                (currentColumnName === AWAITING_REVIEW && (title === IN_PROGRESS || title === DONE)) ||
-                (currentColumnName === DONE && (title === AWAITING_REVIEW));
-        },
     });
 
     const getBackgroundColor = () => {
+        const canDropColor = colorMode === 'light' ? 'rgba(155,100,255,0.1)' : 'rgba(155,100,255,0.3)';
+        const cannotDropColor = colorMode === 'light' ? 'rgba(255,0,0,0.2)' : 'rgba(255,0,0,0.5)';
         if (isOver) {
-            if (canDrop) {
-                return 'rgb(188,251,255)'
-            } else if (!canDrop) {
-                return 'rgb(255,188,188)'
-            }
+            return canDrop ? canDropColor : cannotDropColor
         } else {
             return '';
         }
     };
 
+    const handleOpenCardDetails = (cardId: string) => {
+        onOpenCardDetails(cardId, column.id);
+    };
+
     return (
-        <Box ref={drop} className={className} style={{backgroundColor: getBackgroundColor()}} border="1px solid" padding="1rem">
-            <p>{title}</p>
-            {/*{cards.map((c: any) => <BoardCard key={c.id} name={c.name} id={c.id}/>)}*/}
-            {children}
+        <Box ref={drop} sx={{
+            p: [2, 4],
+            width: '25em',
+            backgroundColor: getBackgroundColor(),
+            height: '100%'
+        }}>
+            <Text sx={{
+                fontWeight: 600,
+                fontSize: 'sm',
+                textTransform: 'uppercase',
+                mb: 2
+            }}>{`${column.name} (${column.cards.length})`}</Text>
+            {column.cards.map((c: any, index: number) =>
+                <MovableCard
+                    key={c.id}
+                    currentColumnId={column.id}
+                    index={index}
+                    card={c}
+                    onUpdateBoard={onUpdateBoard}
+                    onOpenCardDetails={handleOpenCardDetails}
+                />)}
         </Box>
     )
 }

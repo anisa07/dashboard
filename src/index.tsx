@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {ChakraProvider} from '@chakra-ui/react';
+import {ChakraProvider, ColorModeScript} from '@chakra-ui/react';
 import Dashboard from './pages/Dashboard';
 import reportWebVitals from './reportWebVitals';
 import {
@@ -9,19 +9,25 @@ import {
     Route,
 } from "react-router-dom";
 import {Login} from './pages/Login';
+import {theme} from './styles/themes';
+import { PopupProvider } from './provider/PopupProvider';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
+// TODO implement path for each board from list
 root.render(
     <React.StrictMode>
-        <ChakraProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Dashboard/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                </Routes>
-            </BrowserRouter>
+        <ChakraProvider theme={theme}>
+            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+            <PopupProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Dashboard/>}/>
+                        <Route path="/login" element={<Login/>}/>
+                    </Routes>
+                </BrowserRouter>
+            </PopupProvider>
         </ChakraProvider>
     </React.StrictMode>
 );

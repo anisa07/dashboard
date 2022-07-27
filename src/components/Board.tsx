@@ -1,86 +1,85 @@
 import {BoardColumn} from "./BoardColumn";
-import {Flex} from "@chakra-ui/react";
-import { DndProvider } from "react-dnd";
+import {Button, Flex} from "@chakra-ui/react";
+import { v4 as uuidv4 } from 'uuid';
+import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
-import {COLUMN_NAMES, MovableItem} from "./BoardCard";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useThemeHook} from "../hooks/useThemeHook";
+import {AddIcon} from "@chakra-ui/icons";
+import {usePopup} from "../hooks/usePopup";
+import {isMobileDevice} from "../helpers/helperFunc";
 
-const {DO_IT} = COLUMN_NAMES;
-export const tasks = [
-    {id: 1, name: 'Item 1', column: DO_IT},
-    {id: 2, name: 'Item 2', column: DO_IT},
-    {id: 3, name: 'Item 3', column: DO_IT},
-    {id: 4, name: 'Item 4', column: DO_IT},
-];
+export const Board = ({onOpenViewTicketPopup}: any) => {
+    const { showColumnPopup, closePopup, updatePayload } = usePopup();
+    const {bg2} = useThemeHook();
+    const [isMobile, setIsMobile] = useState(false);
 
-export const Board = () => {
+    useEffect(() => {
+        setIsMobile(!!isMobileDevice());
+    }, [isMobileDevice()]);
+
     // TODO request selected board
-
-    const board = {
+    const initialBoardData = {
         id: '1',
         columns: [
-            { id: '1', cards: [{id: '1', name: 'cat'}, {id: '2', name: 'dog'}]},
-            { id: '2', cards: [{id: '3', name: 'wolf'}, {id: '4', name: 'owl'}]},
+            {
+                id: '11',
+                name: 'To Do',
+                cards: [
+                    {id: '1', name: 'cat', subtasks: [{ id: '1', task: 'Task1', done: false }]},
+                    {id: '2', name: 'dog', subtasks: [{ id: '1', task: 'Task1', done: true }, { id: '2', task: 'Task2', done: false }]}]
+            },
+            {
+                id: '22',
+                name: 'In progress',
+                cards: [
+                    {id: '3', name: 'wolf', subtasks: []},
+                    {id: '4', name: 'owl', subtasks: []}
+                ]
+            },
         ]
     }
+    const [columns, setColumns] = useState(initialBoardData.columns);
 
-    const [items, setItems] = useState(tasks);
-    const isMobile = window.innerWidth < 600;
-
-    const moveCardHandler = (dragIndex: number, hoverIndex: number) => {
-        const dragItem = items[dragIndex];
-
-        if (dragItem) {
-            setItems((prevState => {
-                const coppiedStateArray = [...prevState];
-
-                // remove item by "hoverIndex" and put "dragItem" instead
-                const prevItem = coppiedStateArray.splice(hoverIndex, 1, dragItem);
-
-                // remove item by "dragIndex" and put "prevItem" instead
-                coppiedStateArray.splice(dragIndex, 1, prevItem[0]);
-
-                return coppiedStateArray;
-            }));
-        }
-    };
-
-    const returnItemsForColumn = (columnName: string) => {
-        console.log(items
-            .filter((item) => item.column === columnName));
-        return items
-            .filter((item) => item.column === columnName)
-            .map((item, index) => (
-                <MovableItem key={item.id}
-                             name={item.name}
-                             currentColumnName={item.column}
-                             setItems={setItems}
-                             index={index}
-                             moveCardHandler={moveCardHandler}
-                />
-            ))
+    const handleUpdateColumn = (columnName: string) => {
+        const newColumn = {id: uuidv4(), name: columnName, cards: []};
+        const columnsCopy = [...columns];
+        columnsCopy.push(newColumn);
+        setColumns(columnsCopy);
+        closePopup();
     }
 
-    const {DO_IT, IN_PROGRESS, AWAITING_REVIEW, DONE} = COLUMN_NAMES;
+    const handleOpenColumnPopup = () => {
+        updatePayload({
+            onUpdateColumn: handleUpdateColumn,
+            title: 'Add column',
+            name: ''
+        });
+        showColumnPopup();
+    }
 
     return (
-        <Flex>
-            <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
-                <BoardColumn title={DO_IT} className='column do-it-column'>
-                    {returnItemsForColumn(DO_IT)}
-                </BoardColumn>
-                <BoardColumn title={IN_PROGRESS} className='column in-progress-column'>
-                    {returnItemsForColumn(IN_PROGRESS)}
-                </BoardColumn>
-                <BoardColumn title={AWAITING_REVIEW} className='column awaiting-review-column'>
-                    {returnItemsForColumn(AWAITING_REVIEW)}
-                </BoardColumn>
-                <BoardColumn title={DONE} className='column done-column'>
-                    {returnItemsForColumn(DONE)}
-                </BoardColumn>
-                {/*{board.columns.map(c => <BoardColumn key={c.id} cards={c.cards}/>)}*/}
+        <Flex sx={{
+            backgroundColor: bg2,
+            flex: 1,
+            flexDirection: {base: 'column', sm: 'row'},
+        }}>
+            <DndProvider backend={!isMobile ? HTML5Backend : TouchBackend}>
+                {columns.map((column: any) => <BoardColumn
+                    key={column.id}
+                    column={column}
+                    onUpdateBoard={setColumns}
+                    onOpenCardDetails={onOpenViewTicketPopup}
+                />)}
             </DndProvider>
+            <Flex sx={{
+                width: '10em',
+            }}>
+                <Button opacity={0.35} flex={1} variant='link' onClick={handleOpenColumnPopup}>
+                    <AddIcon w={3} h={3} mr={1}/> Add column
+                </Button>
+            </Flex>
         </Flex>
     )
 }
