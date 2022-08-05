@@ -3,6 +3,8 @@
     {
       "id": "c548f98e-fd6e-4908-a9e5-e1fc36f9a2d9",
       "name": "Board with one column",
+      "users": [],
+      "admins": [],
       "columns": [
         {
           "id": "91810201-9373-4577-9bd1-6740c4869eb5",
@@ -30,127 +32,52 @@
                 }
               ],
               "status": "91810201-9373-4577-9bd1-6740c4869eb5"
-            },
-            {
-              "id": "0592dba4-ba2b-4e36-ad8a-2d6575c03087",
-              "name": "test some card",
-              "subtasks": [
-                {
-                  "id": "2a737144-4718-49b3-94db-6cded90f2a39",
-                  "task": "s1",
-                  "done": false
-                },
-                {
-                  "id": "2c730c7e-d4cc-4d36-a92a-69bba33bf1ef",
-                  "task": "s2",
-                  "done": false
-                },
-                {
-                  "id": "79779092-cb98-44f9-b19a-6f69daad6398",
-                  "task": "s3",
-                  "done": false
-                }
-              ],
-              "description": "description",
-              "status": "91810201-9373-4577-9bd1-6740c4869eb5"
-            },
-            {
-              "id": "2d9e3857-561e-4c86-a786-529d9c4aaec3",
-              "name": "Etiam in tincidunt sapien",
-              "description": "Aenean mollis lacinia dapibus. Integer aliquet, felis nec ultrices cursus, diam dui efficitur metus, ut congue augue libero vitae nunc",
-              "subtasks": [
-                {
-                  "id": "23cc7e22-079e-4e09-b9ea-cad91c2d9f15",
-                  "task": "Nullam semper",
-                  "done": true
-                },
-                {
-                  "id": "39d58e60-6a55-4d25-87fe-391b5390dcdf",
-                  "task": "Integer in mollis magna",
-                  "done": true
-                },
-                {
-                  "id": "7847e150-dc7c-4bce-9978-da5c9be4462f",
-                  "task": "Fusce sit amet nisl viverra purus",
-                  "done": true
-                }
-              ],
-              "status": "c548f98e-fd6e-4908-a9e5-e1fc36f9a2d9"
-            },
-            {
-              "id": "fa197fd7-8098-4752-aec7-f5187fff628f",
-              "name": "test card",
-              "subtasks": [
-                {
-                  "id": "af02f935-488d-42e6-9bd9-9a2605c79c82",
-                  "task": "s1",
-                  "done": false
-                },
-                {
-                  "id": "38a0806e-dcb6-4178-a695-8db43431d414",
-                  "task": "s3",
-                  "done": false
-                }
-              ],
-              "description": "test description",
-              "status": "91810201-9373-4577-9bd1-6740c4869eb5"
             }
           ]
         },
         {
-          "id": "0ab0975c-3e6a-4ea8-b778-dd3c768e277a",
-          "name": "in progress",
-          "cards": []
+          "id": "e2a3e207-9be3-44f8-9413-2dc7e3ad9405",
+          "name": "Cras et nulla aliquam",
+          "description": "Curabitur porttitor, erat vel hendrerit posuere, libero mi fermentum purus, non rhoncus neque sem a magna. Pellentesque congue erat sed dapibus ultricies",
+          "subtasks": [
+            {
+              "id": "23cc7e22-079e-4e09-b9ea-cad91c2d9f15",
+              "task": "Nullam semper",
+              "done": true
+            }
+          ],
+          "status": "c548f98e-fd6e-4908-a9e5-e1fc36f9a2d9"
         },
         {
-          "name": "done",
-          "id": "7ab8aa0a-b328-4a1f-876b-65e294472bbe",
-          "cards": [
+          "id": "2d9e3857-561e-4c86-a786-529d9c4aaec3",
+          "name": "Etiam in tincidunt sapien",
+          "description": "Aenean mollis lacinia dapibus. Integer aliquet, felis nec ultrices cursus, diam dui efficitur metus, ut congue augue libero vitae nunc",
+          "subtasks": [
             {
-              "id": "61396e01-6819-4e8e-855b-8c5e7d961fb8",
-              "name": "Test card updated2",
-              "subtasks": [
-                {
-                  "id": "5c269ddc-8465-4014-8fbe-f982c13f0963",
-                  "task": "subtask1",
-                  "done": false
-                }
-              ],
-              "description": "test description updated2",
-              "status": "7ab8aa0a-b328-4a1f-876b-65e294472bbe"
+              "id": "23cc7e22-079e-4e09-b9ea-cad91c2d9f15",
+              "task": "Nullam semper",
+              "done": true
             },
             {
-              "id": "e2a3e207-9be3-44f8-9413-2dc7e3ad9405",
-              "name": "Cras et nulla aliquam",
-              "description": "Curabitur porttitor, erat vel hendrerit posuere, libero mi fermentum purus, non rhoncus neque sem a magna. Pellentesque congue erat sed dapibus ultricies",
-              "subtasks": [
-                {
-                  "id": "23cc7e22-079e-4e09-b9ea-cad91c2d9f15",
-                  "task": "Nullam semper",
-                  "done": true
-                }
-              ],
-              "status": "7ab8aa0a-b328-4a1f-876b-65e294472bbe"
+              "id": "39d58e60-6a55-4d25-87fe-391b5390dcdf",
+              "task": "Integer in mollis magna",
+              "done": true
+            },
+            {
+              "id": "7847e150-dc7c-4bce-9978-da5c9be4462f",
+              "task": "Fusce sit amet nisl viverra purus",
+              "done": true
             }
-          ]
+          ],
+          "status": "c548f98e-fd6e-4908-a9e5-e1fc36f9a2d9"
         }
-      ],
-      "users": [
-        "alice@test.com"
-      ],
-      "admins": [
-        "emy@test.com"
       ]
     },
     {
       "id": "c11a7ee7-3be3-4392-90e0-48714491f26f",
       "name": "Board with several columns",
-      "users": [
-        "aki@test.com"
-      ],
-      "admins": [
-        "alice@test.com"
-      ],
+      "users": [],
+      "admins": [],
       "columns": [
         {
           "id": "11ad647e-0c2d-42dc-99a8-bb8f3d41e592",
@@ -203,7 +130,7 @@
               "status": "11ad647e-0c2d-42dc-99a8-bb8f3d41e592"
             },
             {
-              "id": "2bd2f207-fc3e-4584-9eec-6699c71ca774",
+              "id": "2bd2f207-fc3e-4584-9eec-6699c71ca773",
               "name": "Aenean mauris dolor",
               "description": "",
               "subtasks": [
@@ -344,26 +271,9 @@
     {
       "id": "49c0c7b1-0fe4-4b29-996e-a689c531962f",
       "name": "Empty board",
-      "columns": [
-        {
-          "id": "c65c300d-bd52-4ac2-83f4-b5963c0a83f9",
-          "name": "test1",
-          "cards": []
-        },
-        {
-          "id": "e96c6c1e-304a-42c9-afb6-5c9f93484317",
-          "name": "test2",
-          "cards": []
-        }
-      ],
-      "users": [
-        "emy@test.com",
-        "jay@test.com",
-        "alice@test.com"
-      ],
-      "admins": [
-        "aki@test.com"
-      ]
+      "users": [],
+      "admins": [],
+      "columns": []
     }
   ],
   "users": [

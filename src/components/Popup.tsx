@@ -9,8 +9,7 @@ export const Popup = (props: PopupProps) => {
     const {bg2} = useThemeHook();
 
     return (
-        <Flex sx={{
-            alignItems: 'canter',
+        <Box sx={{
             zIndex: 10,
             overflowY: 'scroll',
             position: 'fixed',
@@ -18,16 +17,17 @@ export const Popup = (props: PopupProps) => {
             width: '100%',
             height: '100%',
             top: 0,
-            left: 0
+            left: 0,
         }}>
             <Box sx={{
                 background: bg2,
                 borderRadius: 5,
-                m: [0, 'auto'],
-                width: 'fit-content'
+                width: 'fit-content',
+                margin: 'auto',
+                marginTop: {base: '1em', md: '5rem'},
             }}>
                 {props.children}
             </Box>
-        </Flex>
+        </Box>
     )
 }

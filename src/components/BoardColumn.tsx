@@ -1,9 +1,15 @@
-import { Box, Text } from "@chakra-ui/react";
+import {Box, Flex, IconButton, Text} from "@chakra-ui/react";
 import {MovableCard} from "./BoardCard";
 import {useDrop} from "react-dnd";
 import {useThemeHook} from "../hooks/useThemeHook";
+import {memo} from "react";
+import {EditIcon} from "@chakra-ui/icons";
+import {usePopup} from "../hooks/usePopup";
 
-export const BoardColumn = ({column, onUpdateBoard, onOpenCardDetails}: any) => {
+const BoardColumn = ({column, onDeleteColumn, onUpdateColumn, onUpdateBoard, onOpenCardDetails, editableBoard}: any) => {
+    const {
+        updatePayload, showColumnPopup
+    } = usePopup();
     const {colorMode} = useThemeHook();
     const [{isOver, canDrop}, drop] = useDrop({
         accept: 'card',
@@ -28,21 +34,43 @@ export const BoardColumn = ({column, onUpdateBoard, onOpenCardDetails}: any) => 
         onOpenCardDetails(cardId, column.id);
     };
 
+    const handleEditColumn = () => {
+        updatePayload({
+            onDeleteColumn,
+            onUpdateColumn,
+            title: 'Edit column',
+            name: column.name,
+            mode: 'edit',
+            columnId: column.id,
+        });
+        showColumnPopup();
+    }
+
     return (
         <Box ref={drop} sx={{
             p: [2, 4],
-            width: '25em',
+            width: '20em',
             backgroundColor: getBackgroundColor(),
             height: '100%'
         }}>
-            <Text sx={{
-                fontWeight: 600,
-                fontSize: 'sm',
-                textTransform: 'uppercase',
-                mb: 2
-            }}>{`${column.name} (${column.cards.length})`}</Text>
+            <Flex justifyContent="space-between" alignItems="center" mb={2}>
+                <Text sx={{
+                    fontWeight: 600,
+                    fontSize: 'sm',
+                    textTransform: 'uppercase',
+                }}>{`${column.name} (${column.cards.length})`}</Text>
+                <IconButton
+                    disabled={!editableBoard}
+                    sx={{backgroundColor: 'transparent'}}
+                    aria-label="edit-icon"
+                    icon={<EditIcon/>}
+                    onClick={handleEditColumn}
+                    size='sm'/>
+            </Flex>
+
             {column.cards.map((c: any, index: number) =>
                 <MovableCard
+                    editableBoard={editableBoard}
                     key={c.id}
                     currentColumnId={column.id}
                     index={index}
@@ -53,3 +81,6 @@ export const BoardColumn = ({column, onUpdateBoard, onOpenCardDetails}: any) => 
         </Box>
     )
 }
+
+const MemoizedBoardColumn = memo(BoardColumn);
+export {MemoizedBoardColumn as BoardColumn}

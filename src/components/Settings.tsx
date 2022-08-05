@@ -11,42 +11,84 @@ import {CloseIcon, MoonIcon, SunIcon, AddIcon} from "@chakra-ui/icons";
 import {useMediaQuery} from '@chakra-ui/react'
 import {BoardList} from "./BoardList";
 import {usePopup} from "../hooks/usePopup";
+import { memo } from "react";
+import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
+import {selectBoardWithColumns, selectCurrentBoard, setBoardWithColumns, setCurrentBoard} from "../slice/boardSlice";
+import {useNavigate} from "react-router-dom";
+import {clearSessionStorage} from "../services/sessionService";
 
 interface SettingsProps {
+    editableBoard: boolean;
     boards: any[];
     onCloseSettings: () => void;
-    onCreateBoard: ({name, columnsNames, users}: any) => void;
+    onDeleteBoard: () => void;
+    onCreateBoard: ({name, columns, admins, users}: any) => void;
+    onEditBoard: ({name, columns, admins, users}: any) => void;
 }
 
-export const Settings = ({boards, onCloseSettings, onCreateBoard}: SettingsProps) => {
-    const {updatePayload, showBoardPopup} = usePopup();
+const Settings = ({ editableBoard, boards, onCloseSettings, onCreateBoard, onEditBoard, onDeleteBoard}: SettingsProps) => {
+    const {updatePayload, showBoardPopup, closePopup} = usePopup();
+    const navigate = useNavigate();
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
     const {toggleColorMode, colorMode, bg1, borderColor} = useThemeHook();
-    // TODO get/set selected board
-    const selectedBoard = {id: '2', name: ''};
+    const dispatch = useAppDispatch();
+    const selectedBoard = useAppSelector(selectCurrentBoard);
+    const board = useAppSelector(selectBoardWithColumns);
 
-    // TODO implement select board, useCallback?
-    const handleSelectBoard = (id: string) => {
+    const handleSelectBoard = (b: any) => {
+        navigate(`/${b.id}`);
+        dispatch(setCurrentBoard(b));
     }
 
-    //TODO implement create board
-    const handleCreateBoard = ({name, columnsNames, users}: any) => {
-        onCreateBoard({name, columnsNames, users})
+    const handleCreateBoard = ({name, columns, users, admins}: any) => {
+        onCreateBoard({name, columns, users, admins});
+    }
+
+    const handleEditBoard = ({name, columns, users, admins}: any) => {
+        onEditBoard({name, columns, users, admins});
+    }
+
+    const handleDeleteBoard = () => {
+        onDeleteBoard();
     }
 
     const handleOpenCreateBoardPopup = () => {
         updatePayload({
             columnList: [],
-            userList: [],
+            admins: [],
+            users: [],
             title: 'Add board',
             name: '',
+            mode: 'create',
             onUpdateBoard: handleCreateBoard,
         });
         showBoardPopup();
     }
 
+    const handleOpenEditBoardPopup = () => {
+        updatePayload({
+            columnList: board.columns,
+            adminList: board.admins,
+            userList: board.users,
+            title: 'Edit board',
+            name: board.name,
+            mode: 'edit',
+            onUpdateBoard: handleEditBoard,
+            onDeleteBoard: handleDeleteBoard
+        });
+        showBoardPopup();
+    }
+
+    const handleLogout = () => {
+        dispatch(setCurrentBoard(undefined));
+        dispatch(setBoardWithColumns(undefined));
+        clearSessionStorage();
+        navigate(`/login`);
+    }
+
     return (
         <Flex
+            id="settings"
             sx={{
                 position: {base: 'absolute', md: 'static'},
                 height: '100%',
@@ -65,11 +107,16 @@ export const Settings = ({boards, onCloseSettings, onCreateBoard}: SettingsProps
 
             <Text fontSize='lg' px={4} mb={4} textTransform="uppercase">All boards ({boards.length})</Text>
 
-            <BoardList onSelectBoard={handleSelectBoard} selectedBoard={selectedBoard} boards={boards}/>
+            <BoardList editableBoard={editableBoard} boards={boards} onSelectBoard={handleSelectBoard} onEditBoard={handleOpenEditBoardPopup}/>
 
             <Flex px={4} mt={4} flexDirection="column" alignItems="flex-start">
                 <Button variant='link' color="bright1" textTransform="capitalize" onClick={handleOpenCreateBoardPopup} mb={4}>
                     <AddIcon w={3} h={3} mr={1}/> Create new board
+                </Button>
+            </Flex>
+            <Flex px={4} mt={4} flexDirection="column" alignItems="flex-start">
+                <Button variant='outline' color="bright1" textTransform="capitalize" onClick={handleLogout} mb={4}>
+                    Logout
                 </Button>
             </Flex>
 
@@ -84,3 +131,6 @@ export const Settings = ({boards, onCloseSettings, onCreateBoard}: SettingsProps
         </Flex>
     )
 }
+
+const MemoizedSettings = memo(Settings);
+export {MemoizedSettings as Settings}

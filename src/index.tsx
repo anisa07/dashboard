@@ -11,6 +11,9 @@ import {
 import {Login} from './pages/Login';
 import {theme} from './styles/themes';
 import { PopupProvider } from './provider/PopupProvider';
+import {Provider} from "react-redux";
+import {store} from "./store/store";
+import {Signup} from "./pages/Signup";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -20,14 +23,18 @@ root.render(
     <React.StrictMode>
         <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <PopupProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<Dashboard/>}/>
-                        <Route path="/login" element={<Login/>}/>
-                    </Routes>
-                </BrowserRouter>
-            </PopupProvider>
+            <Provider store={store}>
+                <PopupProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<Dashboard/>}/>
+                            <Route path="/:id" element={<Dashboard/>}/>
+                            <Route path="/login" element={<Login/>}/>
+                            <Route path="/signup" element={<Signup/>}/>
+                        </Routes>
+                    </BrowserRouter>
+                </PopupProvider>
+            </Provider>
         </ChakraProvider>
     </React.StrictMode>
 );

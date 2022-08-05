@@ -1,18 +1,25 @@
 import {usePopup} from "../hooks/usePopup";
 import {ChangeEvent, useState} from "react";
-import {Input, Text} from "@chakra-ui/react";
+import {IconButton, Input, Text} from "@chakra-ui/react";
 import {PopupContainer} from "./PopupContainer";
 import {EditableEntity} from "./EditableEntity";
+import {DeleteIcon} from "@chakra-ui/icons";
 
 export const AddEditBoard = () => {
     const { closePopup, payload } = usePopup();
-    const {onUpdateBoard, name, title, userList, columnList}: any = payload;
+    const {onUpdateBoard, name, title, userList, adminList, columnList, mode, onDeleteBoard}: any = payload;
     const [boardName, setBoardName] = useState(name || '');
     const [users, setUsers] = useState<string[]>(userList || []);
-    const [columns, setColumns] = useState<string[]>(columnList || []);
+    const [admins, setAdmins] = useState<string[]>(adminList || []);
+    const [columns, setColumns] = useState<any[]>(columnList || []);
 
     const handleUpdateBoard = () => {
-        onUpdateBoard({columnsNames: columns, users, name: boardName});
+        onUpdateBoard({
+            columns,
+            users,
+            admins,
+            name: boardName
+        });
         closePopup();
     }
 
@@ -32,6 +39,7 @@ export const AddEditBoard = () => {
             />
 
             <EditableEntity
+                editColumnsList={true}
                 placeholder="To do"
                 title="Column name"
                 entities={columns}
@@ -39,11 +47,20 @@ export const AddEditBoard = () => {
             />
 
             <EditableEntity
-                placeholder="test@test.com"
+                placeholder="admin@test.com"
+                title="Admin email"
+                entities={admins}
+                setEntities={setAdmins}
+            />
+
+            <EditableEntity
+                placeholder="user@test.com"
                 title="User email"
                 entities={users}
                 setEntities={setUsers}
             />
+
+            { mode === 'edit' && <>Delete Board <IconButton aria-label='Delete board' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteBoard} /></> }
         </PopupContainer>
     )
 }

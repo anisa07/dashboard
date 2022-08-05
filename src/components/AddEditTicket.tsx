@@ -8,7 +8,7 @@ import { getDoneSubtasks } from "../helpers/helperFunc";
 
 export const AddEditTicket = () => {
     const {closePopup, payload} = usePopup();
-    const {onUpdateTicket, title, description, name, mode, statusList, status, subtasks, cardId, columnId}: any = payload;
+    const {onUpdateTicket, title, description, name, mode, statusList, status, subtasks, cardId, prevColumnId, onDeleteCard}: any = payload;
     const [editTicket, setEditTicket] = useState(false);
     const [ticketName, setTicketName] = useState(name || '');
     const [ticketStatus, setTicketStatus] = useState(status || '');
@@ -44,16 +44,20 @@ export const AddEditTicket = () => {
         setTicketStatus(e.target.value);
     }
 
+    const handleDeleteCard = () => {
+        onDeleteCard(cardId, ticketStatus)
+    }
+
     const handleSubmitTicket = () => {
         onUpdateTicket({
-            title: ticketName,
+            name: ticketName,
             description: ticketDescription,
             status: ticketStatus,
             subtasks: ticketSubtasks,
-            cardId,
-            columnId
+            cardId: cardId || uuidv4(),
+            columnId: ticketStatus,
+            mode, prevColumnId
         });
-        closePopup();
     }
 
     const toggleEditMode = () => {
@@ -69,7 +73,7 @@ export const AddEditTicket = () => {
     return (
         <PopupContainer submitTitle={mode === "create" ? "create task" : ""}
                         title={title}
-                        disabled={!ticketName}
+                        disabled={!ticketName && !ticketStatus}
                         onSubmit={handleSubmitTicket}
                         onClose={closePopup}>
             {
@@ -120,7 +124,7 @@ export const AddEditTicket = () => {
                         ))}
                     </Box>
                     <Button colorScheme='purple' variant='outline' textTransform="capitalize" onClick={handleAddSubtask}>
-                        <AddIcon w={3} h={3} mr={1}/> Create new ticket
+                        <AddIcon w={3} h={3} mr={1}/> Create new subtask
                     </Button>
 
                     <Box my={2}>
@@ -166,6 +170,7 @@ export const AddEditTicket = () => {
                     </Flex>
                 </>
             }
+            { editTicket && <>Delete Card <IconButton aria-label='Delete card' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={handleDeleteCard} /></> }
         </PopupContainer>
     )
 }

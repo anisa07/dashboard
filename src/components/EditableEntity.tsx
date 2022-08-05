@@ -1,8 +1,9 @@
 import {Box, Flex, IconButton, Input, List, ListItem, Text} from "@chakra-ui/react";
 import {CheckIcon, DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {ChangeEvent, KeyboardEvent, useState} from "react";
+import {v4 as uuidv4} from 'uuid';
 
-export const EditableEntity = ({title, entities, setEntities, placeholder}: any) => {
+export const EditableEntity = ({title, entities, setEntities, placeholder, editColumnsList}: any) => {
     const [editEntityIndex, setEditEntityIndex] = useState(-1);
     const [entity, setEntity] = useState('');
 
@@ -12,11 +13,11 @@ export const EditableEntity = ({title, entities, setEntities, placeholder}: any)
 
     const handleAddEntity = () => {
         if (editEntityIndex > -1) {
-            const copyEntitys = [...entities];
-            copyEntitys[editEntityIndex] = entity;
-            setEntities(copyEntitys);
+            const copyEntities = [...entities];
+            editColumnsList ? copyEntities[editEntityIndex] = {...copyEntities[editEntityIndex], name: entity} : copyEntities[editEntityIndex] = entity;
+            setEntities(copyEntities);
         } else {
-            setEntities([...entities, entity]);
+            editColumnsList ? setEntities([...entities, {name: entity, id: uuidv4(), cards: []}]) : setEntities([...entities, entity]);
         }
         setEntity('');
     }
@@ -29,7 +30,7 @@ export const EditableEntity = ({title, entities, setEntities, placeholder}: any)
 
     const handleEditEntity = (index: number) => {
         setEditEntityIndex(index);
-        setEntity(entities[index]);
+        editColumnsList ?  setEntity(entities[index].name) : setEntity(entities[index]);
     }
 
     const handleDeleteEntity = (index: number) => {
@@ -54,17 +55,16 @@ export const EditableEntity = ({title, entities, setEntities, placeholder}: any)
             </Flex>
             {entities.length > 0 && <Text mb={1} fontSize="md" textTransform="capitalize">Existing Items</Text>}
             <List mr={1} mb={2}>
-                {entities.map((c: string, index: number) => (
-                    <ListItem key={c} mb={1}>
+                {entities.map((c: string|any, index: number) => {
+                    return (<ListItem key={index} mb={1} sx={{ display: 'block' }}>
                         <Flex justifyContent="space-between">
-                            {c}
+                            {editColumnsList ? c.name : c}
                             <Box>
                                 <IconButton aria-label='Edit' variant='outline' colorScheme='purple' icon={<EditIcon />} mr={1} onClick={() => { handleEditEntity(index) }}/>
                                 <IconButton aria-label='Delete' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={() => { handleDeleteEntity(index) }} />
                             </Box>
                         </Flex>
-                    </ListItem>
-                ))}
+                    </ListItem>)})}
             </List>
         </Box>
     )

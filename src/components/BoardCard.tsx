@@ -1,52 +1,17 @@
 import {Box, Text, Flex} from "@chakra-ui/react";
 import {useDrag, useDrop} from "react-dnd";
-import {useRef, useState} from "react";
+import {memo, useRef, useState} from "react";
 import {useThemeHook} from "../hooks/useThemeHook";
 import {ViewIcon} from "@chakra-ui/icons";
 import { getDoneSubtasks } from "../helpers/helperFunc";
 
-export const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails}: any) => {
+const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails, editableBoard}: any) => {
     const ref = useRef(null);
-
-    const changeColumn = (currentItem: any, columnId: string) => {
-        onUpdateBoard((prevState: any) => {
-            return prevState.map((e: any) => {
-                if (columnId === currentColumnId) {
-                    return e;
-                }
-                if (e.id === currentColumnId) {
-                    return {...e, cards: e.cards.filter((c: any) => c.id !== currentItem.id)}
-                }
-                if (e.id === columnId) {
-                    return {...e, cards: [...e.cards, currentItem]}
-                }
-                return {...e}
-            });
-        });
-    }
-
-    const changePositionInColumn = (dragIndex: number, hoverIndex: number) => {
-        onUpdateBoard((prevState: any) => {
-            return prevState.map((e: any) => {
-                if (e.id === currentColumnId) {
-                    const copyCards = [...e.cards];
-                    if (dragIndex !== hoverIndex) {
-                        const removedItem = copyCards.splice(dragIndex, 1);
-                        copyCards.splice(hoverIndex, 0, removedItem[0]);
-                    }
-                    return {
-                        ...e, cards: copyCards
-                    };
-                }
-                return {...e}
-            });
-        });
-    }
 
     const [, drop] = useDrop({
         accept: 'card',
         hover(item: any, monitor) {
-            if (!ref.current) {
+            if (!editableBoard || !ref.current) {
                 return;
             }
             const dragIndex = item.index;
@@ -77,8 +42,8 @@ export const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpen
                 return;
             }
             // Time to actually perform the action
-            // onMoveCard(dragIndex, hoverIndex, currentColumnId);
-            changePositionInColumn(dragIndex, hoverIndex);
+            onUpdateBoard({dragIndex, hoverIndex, currentItem: item.card, columnId: '', currentColumnId});
+
             // Note: we're mutating the monitor item here!
             // Generally it's better to avoid mutations,
             // but it's good here for the sake of performance
@@ -91,11 +56,14 @@ export const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpen
         type: 'card',
         item: {index, card, currentColumnId},
         end: (item, monitor) => {
+            if (!editableBoard) {
+                return;
+            }
             const dropResult: any = monitor.getDropResult();
 
             if (dropResult) {
                 const {id} = dropResult;
-                changeColumn(card, id);
+                onUpdateBoard({dragIndex: -1, hoverIndex: -1, currentItem: item.card, columnId: id, currentColumnId});
             }
         },
         collect: (monitor) => ({
@@ -109,13 +77,13 @@ export const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpen
 
     return (
         <Box ref={ref} opacity={opacity}>
-            <BoardCard card={card} onOpenCardDetails={onOpenCardDetails}/>
+            <BoardCard editableBoard={editableBoard} card={card} onOpenCardDetails={onOpenCardDetails}/>
         </Box>
     )
 
 }
 
-export const BoardCard = ({card, onOpenCardDetails}: any) => {
+export const BoardCard = ({card, onOpenCardDetails, editableBoard}: any) => {
     const {bg1} = useThemeHook();
     const [mouseOver, setMouseOver] = useState(false);
 
@@ -128,7 +96,9 @@ export const BoardCard = ({card, onOpenCardDetails}: any) => {
     }
 
     const handleOpenCardDetails = () => {
-        onOpenCardDetails(card.id);
+        if (editableBoard) {
+            onOpenCardDetails(card.id);
+        }
     }
 
     return (
@@ -168,3 +138,6 @@ export const BoardCard = ({card, onOpenCardDetails}: any) => {
         </Box>
     )
 }
+
+const MemoizedMovableCard = memo(MovableCard);
+export {MemoizedMovableCard as MovableCard}

@@ -13,3 +13,7 @@ export const getDoneSubtasks = (subtasks: any[]) => {
     const doneSubtasks = subtasks.filter((s: any) => s.done);
     return `${doneSubtasks.length} of ${subtasks.length}`
 }
+
+export function deepCloneOfItem<T>(item: T) {
+    return JSON.parse(JSON.stringify(item));
+}

@@ -1,15 +1,15 @@
 import {Button, Flex, Box, Text} from "@chakra-ui/react"
 import {useFormCustomHook} from "../hooks/useFormHook";
 import {FormDataType} from "../types/validationTypes";
-import {ensureEmail, ensureNotEmpty} from "../rules/validation";
+import {ensureEmail, ensureNotEmpty, ensurePasswordsAreEqual} from "../rules/validation";
 import {colors} from "../styles/themes";
 import {FormEvent, useEffect} from "react";
 import {FormInput} from "../components/FormInput";
 import {useNavigate, Link} from "react-router-dom";
 import {getUserFromSessionStorage} from "../services/sessionService";
-import {login} from "../services/authService";
+import {signup} from "../services/authService";
 
-export const Login = () => {
+export const Signup = () => {
     const formData: FormDataType = {
         email: {
             errorMessage: "",
@@ -17,11 +17,23 @@ export const Login = () => {
             error: false,
             validation: [ensureNotEmpty, ensureEmail]
         },
+        name: {
+            errorMessage: "",
+            value: "",
+            error: false,
+            validation: [ensureNotEmpty]
+        },
         password: {
             errorMessage: "",
             value: "",
             error: false,
             validation: [ensureNotEmpty]
+        },
+        newPassword: {
+            errorMessage: "",
+            value: "",
+            error: false,
+            validation: [ensureNotEmpty, ensurePasswordsAreEqual]
         },
     };
     const { onChange, isValid, form, cleanFormData } = useFormCustomHook({...formData});
@@ -35,12 +47,13 @@ export const Login = () => {
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await login({
-            email: form.email.value,
-            password: form.password.value,
+        await signup({
+            email: form.email,
+            name: form.name,
+            password: form.password,
         });
         cleanFormData();
-        navigate("/")
+        navigate("/login")
     }
 
     return (
@@ -55,9 +68,23 @@ export const Login = () => {
                     onChange={onChange}
                 />
                 <FormInput
+                    formElement={form.name}
+                    label="Name"
+                    name="name"
+                    type="text"
+                    onChange={onChange}
+                />
+                <FormInput
                     formElement={form.password}
                     label="Password"
                     name="password"
+                    type="password"
+                    onChange={onChange}
+                />
+                <FormInput
+                    formElement={form.password}
+                    label="Repeat Password"
+                    name="newPassword"
                     type="password"
                     onChange={onChange}
                 />
@@ -72,7 +99,7 @@ export const Login = () => {
                         variant='solid' onClick={onSubmit}>
                         Submit
                     </Button>
-                    <Link to="/signup">No account? Just signup!</Link>
+                    <Link to="/login">Have an account? Just login!</Link>
                 </Flex>
             </form>
         </Box>
