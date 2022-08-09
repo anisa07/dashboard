@@ -16,6 +16,7 @@ import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
 import {selectBoardWithColumns, selectCurrentBoard, setBoardWithColumns, setCurrentBoard} from "../slice/boardSlice";
 import {useNavigate} from "react-router-dom";
 import {clearSessionStorage} from "../services/sessionService";
+import {logout} from "../services/authService";
 
 interface SettingsProps {
     editableBoard: boolean;
@@ -79,10 +80,10 @@ const Settings = ({ editableBoard, boards, onCloseSettings, onCreateBoard, onEdi
         showBoardPopup();
     }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logout();
         dispatch(setCurrentBoard(undefined));
         dispatch(setBoardWithColumns(undefined));
-        clearSessionStorage();
         navigate(`/login`);
     }
 

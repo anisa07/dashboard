@@ -370,29 +370,29 @@
     {
       "id": "e3ba6383-bddc-485f-b8de-ecee9580e926",
       "name": "Alice Li",
-      "email": "alice@test.com",
-      "password": "",
+      "email": "alice_test@mailinator.com",
+      "password": "Test$1234",
       "boards": []
     },
     {
       "id": "62fb9be8-7d45-44c4-a17b-f2132afe124f",
       "name": "Emy Jo",
       "email": "emy@test.com",
-      "password": "",
+      "password": "Test$1234",
       "boards": []
     },
     {
       "id": "8200ecf0-bafe-43d6-98d7-048f11dcf2d5",
       "name": "Aki Ray",
       "email": "aki@test.com",
-      "password": "",
+      "password": "Test$1234",
       "boards": []
     },
     {
       "id": "70631645-fc8d-4c3a-a215-f688345f5507",
       "name": "Jay Ma",
       "email": "jay@test.com",
-      "password": "",
+      "password": "Test$1234",
       "boards": []
     }
   ]

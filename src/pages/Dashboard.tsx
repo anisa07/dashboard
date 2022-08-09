@@ -11,11 +11,11 @@ import {AddEditTicket} from '../components/AddEditTicket';
 import {AddEditColumn} from '../components/AddEditColumn';
 import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
 import {
-    getBoardList,
-    selectBoardList,
+    getBoardNameList,
+    selectBoardNamesList,
     selectBoardWithColumns,
     selectCurrentBoard,
-    setBoardList, setBoardWithColumns,
+    setBoardNamesList, setBoardWithColumns,
     setCurrentBoard
 } from "../slice/boardSlice";
 import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
@@ -32,7 +32,7 @@ function Dashboard() {
         updatePayload,
         closePopup
     } = usePopup();
-    const boards = useAppSelector(selectBoardList);
+    const boards = useAppSelector(selectBoardNamesList);
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const board = useAppSelector(selectBoardWithColumns);
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
@@ -42,7 +42,7 @@ function Dashboard() {
     useEffect(() => {
         const userExists = !!getUserFromSessionStorage();
         if (userExists) {
-            dispatch(getBoardList())
+            dispatch(getBoardNameList())
         } else {
             navigate('/login')
         }
@@ -67,7 +67,7 @@ function Dashboard() {
         try {
             await saveBoard(newBoard);
             const boardAsListItem = {id: newBoard.id, name, users, admins};
-            dispatch(setBoardList([...boards, boardAsListItem]));
+            dispatch(setBoardNamesList([...boards, boardAsListItem]));
             dispatch(setCurrentBoard(boardAsListItem));
             closePopup();
         } catch (e) {
@@ -83,7 +83,7 @@ function Dashboard() {
             await deleteBoard(selectedBoard.id);
             dispatch(setCurrentBoard(undefined));
             dispatch(setBoardWithColumns(undefined));
-            dispatch(setBoardList(copyBoards));
+            dispatch(setBoardNamesList(copyBoards));
             closePopup()
         } catch (e) {
             console.log(e)
@@ -98,7 +98,7 @@ function Dashboard() {
             const copyBoards = deepCloneOfItem(boards);
             const boardIndex = copyBoards.findIndex((b: any) => b.id === boardAsListItem.id);
             copyBoards[boardIndex] = boardAsListItem;
-            dispatch(setBoardList(copyBoards));
+            dispatch(setBoardNamesList(copyBoards));
             dispatch(setCurrentBoard(boardAsListItem));
             closePopup();
         } catch (e) {
@@ -187,7 +187,7 @@ function Dashboard() {
         showTicketPopup();
     }
 
-    const userIsAdmin = () => board?.admins?.includes(getUserFromSessionStorage().email);
+    const userIsAdmin = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
 
     return (
         <Flex height="100%" position="relative">

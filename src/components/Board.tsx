@@ -110,6 +110,7 @@ const Board = ({onOpenViewTicketPopup, selectedBoard, editableBoard}: any) => {
         }
     }
 
+    console.log(board)
     return (
         <Flex sx={{
             backgroundColor: bg2,
@@ -117,7 +118,7 @@ const Board = ({onOpenViewTicketPopup, selectedBoard, editableBoard}: any) => {
             flexDirection: {base: 'column', sm: 'row'},
         }}>
             <DndProvider backend={!isMobile ? HTML5Backend : TouchBackend}>
-                {board?.columns.map((column: any) => <BoardColumn
+                {board?.columns?.map((column: any) => <BoardColumn
                     editableBoard={editableBoard}
                     key={column.id}
                     column={column}

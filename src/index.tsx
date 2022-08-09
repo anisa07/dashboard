@@ -18,7 +18,7 @@ import {Signup} from "./pages/Signup";
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
-// TODO implement path for each board from list
+
 root.render(
     <React.StrictMode>
         <ChakraProvider theme={theme}>

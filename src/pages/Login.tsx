@@ -35,12 +35,17 @@ export const Login = () => {
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await login({
-            email: form.email.value,
-            password: form.password.value,
-        });
-        cleanFormData();
-        navigate("/")
+        try {
+            await login({
+                email: form.email.value,
+                password: form.password.value,
+            });
+            cleanFormData();
+            navigate("/")
+        } catch (e: any) {
+            // todo handle errors
+            console.log(e.message)
+        }
     }
 
     return (

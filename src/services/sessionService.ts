@@ -21,7 +21,7 @@ export const saveUserToSessionStorage = (userData: any) => {
 
 export const clearSessionStorage = () => {
     try {
-        sessionStorage.removeItem(USER_KEY)
+        sessionStorage.clear();
     } catch (_) {
         throw new Error(`Error clearing storage`);
     }

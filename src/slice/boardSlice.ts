@@ -1,30 +1,31 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {fetchBoardData, fetchBoardList} from "../services/boardService";
+import {fetchBoardData, fetchBoardNames} from "../services/boardService";
 import {RootState} from "../types/storeTypes";
 
 export type BoardState = {
-    boardList: any[],
+    boardNamesList: any[],
     boardWithColumns: any,
     currentBoard: any,
 };
 
 const initialState: BoardState = {
-    boardList: [],
+    boardNamesList: [],
     boardWithColumns: {columns: []},
     currentBoard: undefined
 };
 
-export const getBoardList = createAsyncThunk('board/boardList', async () => {
-    const boardList = await fetchBoardList();
+export const getBoardNameList = createAsyncThunk('board/boardNamesList', async () => {
+    const boardNamesList: any[] = await fetchBoardNames();
     return {
-        boardList
+        boardNamesList
     }
 });
 
 export const getBoardData = createAsyncThunk('board/boardData', async (id: string) => {
-   const boardList = await fetchBoardData(id);
+   const boardData = await fetchBoardData(id);
+   console.log(boardData)
     return {
-        boardWithColumns: boardList
+        boardWithColumns: boardData
     }
 });
 
@@ -38,14 +39,14 @@ export const boardSlice = createSlice({
         setBoardWithColumns: (state, action: PayloadAction<any>) => {
             state.boardWithColumns = action.payload;
         },
-        setBoardList: (state, action: PayloadAction<any[]>) => {
-            state.boardList = action.payload || [];
+        setBoardNamesList: (state, action: PayloadAction<any[]>) => {
+            state.boardNamesList = action.payload || [];
         }
     },
     extraReducers: builder => {
         builder
-            .addCase(getBoardList.fulfilled, (state, {payload}) => {
-                state.boardList = payload.boardList;
+            .addCase(getBoardNameList.fulfilled, (state, {payload}) => {
+                state.boardNamesList = payload.boardNamesList;
             })
             .addCase(getBoardData.fulfilled, (state, {payload}) => {
                 state.boardWithColumns = payload.boardWithColumns
@@ -56,10 +57,10 @@ export const boardSlice = createSlice({
 export const {
     setCurrentBoard,
     setBoardWithColumns,
-    setBoardList,
+    setBoardNamesList,
 } = boardSlice.actions;
 
-export const selectBoardList = (state: RootState) => state.board.boardList;
+export const selectBoardNamesList = (state: RootState) => state.board.boardNamesList;
 export const selectCurrentBoard = (state: RootState) => state.board.currentBoard;
 export const selectBoardWithColumns = (state: RootState) => state.board.boardWithColumns;
 

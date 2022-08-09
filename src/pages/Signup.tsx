@@ -48,12 +48,12 @@ export const Signup = () => {
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
         await signup({
-            email: form.email,
-            name: form.name,
-            password: form.password,
+            email: form.email.value,
+            name: form.name.value,
+            password: form.password.value,
         });
         cleanFormData();
-        navigate("/login")
+        navigate("/")
     }
 
     return (
@@ -82,7 +82,7 @@ export const Signup = () => {
                     onChange={onChange}
                 />
                 <FormInput
-                    formElement={form.password}
+                    formElement={form.newPassword}
                     label="Repeat Password"
                     name="newPassword"
                     type="password"
