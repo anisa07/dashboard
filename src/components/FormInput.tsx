@@ -1,6 +1,16 @@
 import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
+import {FormDataElement} from "../types/validationTypes";
+import {ChangeEvent} from "react";
 
-export const FormInput = ({formElement, name, label, type,  onChange}: any) => {
+interface FormInputProps {
+    formElement: FormDataElement,
+    name: string,
+    label: string,
+    type: string,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void
+}
+
+export const FormInput = ({formElement, name, label, type,  onChange}: FormInputProps) => {
     const { value, error, errorMessage } = formElement;
 
     return <FormControl my={4}>

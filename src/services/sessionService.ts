@@ -11,7 +11,13 @@ export const getUserFromSessionStorage = () => {
     }
 }
 
-export const saveUserToSessionStorage = (userData: any) => {
+interface UserData {
+    accessToken: string,
+    email: string,
+    uid: string,
+}
+
+export const saveUserToSessionStorage = (userData: UserData) => {
     try {
         sessionStorage.setItem(USER_KEY, JSON.stringify(userData));
     } catch (_) {

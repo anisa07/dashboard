@@ -24,7 +24,7 @@ export const theme = extendTheme({
         body: `'Open Sans', sans-serif;`
     },
     styles: {
-        global: (props: any) => ({
+        global: (props: { colorMode: string }) => ({
             'html, body': {
                 height: '100%',
                 color: props.colorMode === 'light' ? 'colorLightTheme' : 'colorDarkTheme',

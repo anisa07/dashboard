@@ -2,8 +2,17 @@ import {Box, Flex, IconButton, Input, List, ListItem, Text} from "@chakra-ui/rea
 import {CheckIcon, DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {ChangeEvent, KeyboardEvent, useState} from "react";
 import {v4 as uuidv4} from 'uuid';
+import {Column} from "../types/dataTypes";
 
-export const EditableEntity = ({title, entities, setEntities, placeholder, editColumnsList}: any) => {
+interface EditableEntityProps {
+    title: string,
+    placeholder: string,
+    entities: Array<string|any>,
+    editColumnsList?: boolean,
+    setEntities: (e: Array<string|any>) => void
+}
+
+export const EditableEntity = ({title, entities, setEntities, placeholder, editColumnsList}: EditableEntityProps) => {
     const [editEntityIndex, setEditEntityIndex] = useState(-1);
     const [entity, setEntity] = useState('');
 
@@ -14,7 +23,7 @@ export const EditableEntity = ({title, entities, setEntities, placeholder, editC
     const handleAddEntity = () => {
         if (editEntityIndex > -1) {
             const copyEntities = [...entities];
-            editColumnsList ? copyEntities[editEntityIndex] = {...copyEntities[editEntityIndex], name: entity} : copyEntities[editEntityIndex] = entity;
+            copyEntities[editEntityIndex] = editColumnsList ? {...copyEntities[editEntityIndex], name: entity} : entity;
             setEntities(copyEntities);
         } else {
             editColumnsList ? setEntities([...entities, {name: entity, id: uuidv4(), cards: []}]) : setEntities([...entities, entity]);
@@ -55,10 +64,10 @@ export const EditableEntity = ({title, entities, setEntities, placeholder, editC
             </Flex>
             {entities.length > 0 && <Text mb={1} fontSize="md" textTransform="capitalize">Existing Items</Text>}
             <List mr={1} mb={2}>
-                {entities.map((c: string|any, index: number) => {
+                {entities.map((c: string|Column, index: number) => {
                     return (<ListItem key={index} mb={1} sx={{ display: 'block' }}>
                         <Flex justifyContent="space-between">
-                            {editColumnsList ? c.name : c}
+                            { typeof c === 'string' ? c : c.name }
                             <Box>
                                 <IconButton aria-label='Edit' variant='outline' colorScheme='purple' icon={<EditIcon />} mr={1} onClick={() => { handleEditEntity(index) }}/>
                                 <IconButton aria-label='Delete' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={() => { handleDeleteEntity(index) }} />

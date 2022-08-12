@@ -3,25 +3,18 @@ import {Settings} from "../components/Settings";
 import {Board} from "../components/Board";
 import {Flex, useMediaQuery} from '@chakra-ui/react';
 import {Header} from "../components/Header";
-import {v4 as uuidv4} from 'uuid';
 import {usePopup} from "../hooks/usePopup";
 import {Popup} from '../components/Popup';
 import {AddEditBoard} from '../components/AddEditBoard';
 import {AddEditTicket} from '../components/AddEditTicket';
 import {AddEditColumn} from '../components/AddEditColumn';
 import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
-import {
-    getBoardNameList,
-    selectBoardNamesList,
-    selectBoardWithColumns,
-    selectCurrentBoard,
-    setBoardNamesList, setBoardWithColumns,
-    setCurrentBoard
-} from "../slice/boardSlice";
-import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
+import {getBoardNameList, selectBoardWithColumns, setBoardWithColumns,} from "../slice/boardSlice";
+import {updateBoard} from "../services/boardService";
 import {deepCloneOfItem} from "../helpers/helperFunc";
 import {getUserFromSessionStorage} from "../services/sessionService";
 import {useNavigate} from "react-router-dom";
+import {Board as BoardType, Mode, TicketEntity} from '../types/dataTypes'
 
 function Dashboard() {
     const {
@@ -32,8 +25,6 @@ function Dashboard() {
         updatePayload,
         closePopup
     } = usePopup();
-    const boards = useAppSelector(selectBoardNamesList);
-    const selectedBoard = useAppSelector(selectCurrentBoard);
     const board = useAppSelector(selectBoardWithColumns);
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
     const dispatch = useAppDispatch();
@@ -48,7 +39,6 @@ function Dashboard() {
         }
     }, []);
 
-    // TODO check if user exists and logged in, request boards list of this user, select first board
     const [showSettings, setShowSettings] = useState(false);
 
     const handleCloseSettings = () => {
@@ -62,53 +52,9 @@ function Dashboard() {
         }
     }
 
-    const handleCreateBoard = async ({name, columns, users, admins}: any) => {
-        const newBoard = {id: uuidv4(), name, columns, users, admins};
-        try {
-            await saveBoard(newBoard);
-            const boardAsListItem = {id: newBoard.id, name, users, admins};
-            dispatch(setBoardNamesList([...boards, boardAsListItem]));
-            dispatch(setCurrentBoard(boardAsListItem));
-            closePopup();
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const handleDeleteBoard = async () => {
-        const copyBoards = deepCloneOfItem(boards);
-        const boardIndex = copyBoards.findIndex((b: any) => b.id === selectedBoard.id);
-        copyBoards.splice(boardIndex, 1);
-        try {
-            await deleteBoard(selectedBoard.id);
-            dispatch(setCurrentBoard(undefined));
-            dispatch(setBoardWithColumns(undefined));
-            dispatch(setBoardNamesList(copyBoards));
-            closePopup()
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const handleEditBoard = async ({name, columns, users, admins}: any) => {
-        const updatedBoard = {id: selectedBoard.id, name, columns, users, admins};
-        try {
-            await updateBoard(updatedBoard);
-            const boardAsListItem = {id: updatedBoard.id, name, users, admins};
-            const copyBoards = deepCloneOfItem(boards);
-            const boardIndex = copyBoards.findIndex((b: any) => b.id === boardAsListItem.id);
-            copyBoards[boardIndex] = boardAsListItem;
-            dispatch(setBoardNamesList(copyBoards));
-            dispatch(setCurrentBoard(boardAsListItem));
-            closePopup();
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const handleSubmitTicket = async ({cardId, subtasks, status, name, description, mode, prevColumnId}: any) => {
-        const copySelectedBoardWithColumns = deepCloneOfItem(board);
-        const columnIndex = status ? copySelectedBoardWithColumns.columns.findIndex((c: any) => c.id === status) : 0;
+    const handleSubmitTicket = async ({cardId, subtasks, status, name, description, mode, prevColumnId}: TicketEntity) => {
+        const copySelectedBoardWithColumns: BoardType = deepCloneOfItem(board);
+        const columnIndex = status ? copySelectedBoardWithColumns.columns.findIndex(c => c.id === status) : 0;
         const card = {
             id: cardId,
             name,
@@ -116,14 +62,14 @@ function Dashboard() {
             description,
             status
         };
-        if (mode === 'create') {
+        if (mode === Mode.CREATE) {
             copySelectedBoardWithColumns.columns[columnIndex].cards.push(card);
         } else {
-            const cardIndex = copySelectedBoardWithColumns.columns[columnIndex].cards.findIndex((c: any) => c.id === cardId);
+            const cardIndex = copySelectedBoardWithColumns.columns[columnIndex].cards.findIndex(c => c.id === cardId);
             if (cardIndex === -1) {
                 copySelectedBoardWithColumns.columns[columnIndex].cards.push(card);
-                const prevColumnIndex = copySelectedBoardWithColumns.columns.findIndex((c: any) => c.id === prevColumnId);
-                const prevCardIndex = copySelectedBoardWithColumns.columns[prevColumnIndex].cards.findIndex((c: any) => c.id === cardId);
+                const prevColumnIndex = copySelectedBoardWithColumns.columns.findIndex(c => c.id === prevColumnId);
+                const prevCardIndex = copySelectedBoardWithColumns.columns[prevColumnIndex].cards.findIndex(c => c.id === cardId);
                 copySelectedBoardWithColumns.columns[prevColumnIndex].cards.splice(prevCardIndex, 1);
             } else {
                 copySelectedBoardWithColumns.columns[columnIndex].cards.splice(cardIndex, 1, card);
@@ -147,15 +93,15 @@ function Dashboard() {
             subtasks: [],
             description: '',
             name: '',
-            mode: 'create',
+            mode: Mode.CREATE,
             status: ''
         });
         showTicketPopup();
     }
 
     const handleDeleteCard = async (cardId: string, columnId: string) => {
-        const columnIndex = board.columns.findIndex((c: any) => c.id === columnId);
-        const cardIndex = board.columns[columnIndex].cards.findIndex((c: any) => c.id === cardId);
+        const columnIndex = board.columns.findIndex(c => c.id === columnId);
+        const cardIndex = board.columns[columnIndex].cards.findIndex(c => c.id === cardId);
         const copySelectedBoardWithColumns = deepCloneOfItem(board);
         copySelectedBoardWithColumns.columns[columnIndex].cards.splice(cardIndex, 1);
         try {
@@ -168,8 +114,8 @@ function Dashboard() {
     }
 
     const handleOpenViewTicketPopup = (cardId: string, prevColumnId: string) => {
-        const columnIndex = board.columns.findIndex((c: any) => c.id === prevColumnId);
-        const cardIndex = board.columns[columnIndex].cards.findIndex((c: any) => c.id === cardId);
+        const columnIndex = board.columns.findIndex(c => c.id === prevColumnId);
+        const cardIndex = board.columns[columnIndex].cards.findIndex(c => c.id === cardId);
         const card = deepCloneOfItem(board.columns[columnIndex].cards[cardIndex]);
         updatePayload({
             title: 'Edit card',
@@ -178,7 +124,7 @@ function Dashboard() {
             subtasks: card.subtasks,
             description: card.description,
             name: card.name,
-            mode: 'view',
+            mode: Mode.VIEW,
             status: card.status,
             cardId,
             prevColumnId,
@@ -187,28 +133,14 @@ function Dashboard() {
         showTicketPopup();
     }
 
-    const userIsAdmin = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
-
     return (
         <Flex height="100%" position="relative">
-            {showSettings && <Settings
-                editableBoard={userIsAdmin()}
-                boards={boards}
-                onCloseSettings={handleCloseSettings}
-                onCreateBoard={handleCreateBoard}
-                onEditBoard={handleEditBoard}
-                onDeleteBoard={handleDeleteBoard}
-            />
-            }
+            {showSettings && <Settings onCloseSettings={handleCloseSettings} />}
             <Flex flex="1" flexDirection="column">
                 <Header
-                    selectedBoardName={selectedBoard?.name}
-                    editableBoard={userIsAdmin()}
                     toggleSettings={toggleSettings}
                     onOpenCreateTicketPopup={handleOpenCreateTicketPopup}/>
                 <Board
-                    editableBoard={userIsAdmin()}
-                    selectedBoard={selectedBoard}
                     onOpenViewTicketPopup={handleOpenViewTicketPopup}/>
             </Flex>
             {isVisibleBoardPopup && <Popup>

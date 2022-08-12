@@ -3,6 +3,7 @@ import {ChangeEvent, useState} from "react";
 import {usePopup} from "../hooks/usePopup";
 import {PopupContainer} from "./PopupContainer";
 import {DeleteIcon} from "@chakra-ui/icons";
+import {Mode} from "../types/dataTypes";
 
 export const AddEditColumn = () => {
     const { closePopup, payload } = usePopup();
@@ -27,7 +28,7 @@ export const AddEditColumn = () => {
                 value={columnName}
                 onChange={handleSetName}
             />
-            { mode === 'edit' && <> Delete Column <IconButton aria-label='Delete column' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteColumn} /></> }
+            { mode === Mode.EDIT && <> Delete Column <IconButton aria-label='Delete column' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteColumn} /></> }
         </PopupContainer>
     )
 }

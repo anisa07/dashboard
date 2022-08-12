@@ -4,6 +4,7 @@ import {IconButton, Input, Text} from "@chakra-ui/react";
 import {PopupContainer} from "./PopupContainer";
 import {EditableEntity} from "./EditableEntity";
 import {DeleteIcon} from "@chakra-ui/icons";
+import {Column, Mode} from "../types/dataTypes";
 
 export const AddEditBoard = () => {
     const { closePopup, payload } = usePopup();
@@ -11,7 +12,7 @@ export const AddEditBoard = () => {
     const [boardName, setBoardName] = useState(name || '');
     const [users, setUsers] = useState<string[]>(userList || []);
     const [admins, setAdmins] = useState<string[]>(adminList || []);
-    const [columns, setColumns] = useState<any[]>(columnList || []);
+    const [columns, setColumns] = useState<Column[]>(columnList || []);
 
     const handleUpdateBoard = () => {
         onUpdateBoard({
@@ -60,7 +61,7 @@ export const AddEditBoard = () => {
                 setEntities={setUsers}
             />
 
-            { mode === 'edit' && <>Delete Board <IconButton aria-label='Delete board' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteBoard} /></> }
+            { mode === Mode.EDIT && <>Delete Board <IconButton aria-label='Delete board' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteBoard} /></> }
         </PopupContainer>
     )
 }

@@ -3,7 +3,18 @@ import { collection, addDoc } from "firebase/firestore";
 import {clearSessionStorage, saveUserToSessionStorage} from "./sessionService";
 import {auth, db} from "../firebase";
 
-export const login = async ({email, password}: any) => {
+interface Auth {
+    email: string,
+    password: string,
+}
+
+interface User {
+    email: string,
+    password: string,
+    name: string
+}
+
+export const login = async ({email, password}: Auth) => {
     try {
         const res = await signInWithEmailAndPassword(auth, email, password);
         const user = res.user;
@@ -25,7 +36,7 @@ export const logout = async () => {
     }
 }
 
-export const signup = async ({email, password, name}: any) => {
+export const signup = async ({email, password, name}: User) => {
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;

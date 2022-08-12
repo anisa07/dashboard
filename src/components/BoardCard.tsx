@@ -4,8 +4,18 @@ import {memo, useRef, useState} from "react";
 import {useThemeHook} from "../hooks/useThemeHook";
 import {ViewIcon} from "@chakra-ui/icons";
 import { getDoneSubtasks } from "../helpers/helperFunc";
+import {Card, CardUpdateProps} from "../types/dataTypes";
 
-const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails, editableBoard}: any) => {
+interface MovableCardProps {
+    card: Card,
+    index: number,
+    currentColumnId: string,
+    editableBoard: boolean,
+    onOpenCardDetails: (id: string) => void,
+    onUpdateBoard: (update: CardUpdateProps) => void
+}
+
+const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails, editableBoard}: MovableCardProps) => {
     const ref = useRef(null);
 
     const [, drop] = useDrop({

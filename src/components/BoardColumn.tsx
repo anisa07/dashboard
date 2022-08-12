@@ -5,8 +5,18 @@ import {useThemeHook} from "../hooks/useThemeHook";
 import {memo} from "react";
 import {EditIcon} from "@chakra-ui/icons";
 import {usePopup} from "../hooks/usePopup";
+import {CardUpdateProps, Column, ColumnUpdateProps} from "../types/dataTypes";
 
-const BoardColumn = ({column, onDeleteColumn, onUpdateColumn, onUpdateBoard, onOpenCardDetails, editableBoard}: any) => {
+interface BoardColumnProps {
+    column: Column,
+    editableBoard: boolean,
+    onDeleteColumn: (id: string) => void,
+    onUpdateColumn: (u: ColumnUpdateProps) => void,
+    onUpdateBoard: (u: CardUpdateProps) => void,
+    onOpenCardDetails: (cardId: string, prevColumnId: string) => void,
+}
+
+const BoardColumn = ({column, editableBoard, onDeleteColumn, onUpdateColumn, onUpdateBoard, onOpenCardDetails}: BoardColumnProps) => {
     const {
         updatePayload, showColumnPopup
     } = usePopup();

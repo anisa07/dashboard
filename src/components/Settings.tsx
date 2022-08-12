@@ -11,46 +11,86 @@ import {CloseIcon, MoonIcon, SunIcon, AddIcon} from "@chakra-ui/icons";
 import {useMediaQuery} from '@chakra-ui/react'
 import {BoardList} from "./BoardList";
 import {usePopup} from "../hooks/usePopup";
-import { memo } from "react";
+import {memo} from "react";
 import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
-import {selectBoardWithColumns, selectCurrentBoard, setBoardWithColumns, setCurrentBoard} from "../slice/boardSlice";
+import {
+    selectBoardNamesList,
+    selectBoardWithColumns, selectCurrentBoard,
+    setBoardNamesList,
+    setBoardWithColumns,
+    setCurrentBoard
+} from "../slice/boardSlice";
 import {useNavigate} from "react-router-dom";
-import {clearSessionStorage} from "../services/sessionService";
 import {logout} from "../services/authService";
+import {Board as BoardType, Board} from "../types/dataTypes";
+import {v4 as uuidv4} from "uuid";
+import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
+import {deepCloneOfItem} from "../helpers/helperFunc";
+import {getUserFromSessionStorage} from "../services/sessionService";
 
 interface SettingsProps {
-    editableBoard: boolean;
-    boards: any[];
     onCloseSettings: () => void;
-    onDeleteBoard: () => void;
-    onCreateBoard: ({name, columns, admins, users}: any) => void;
-    onEditBoard: ({name, columns, admins, users}: any) => void;
 }
 
-const Settings = ({ editableBoard, boards, onCloseSettings, onCreateBoard, onEditBoard, onDeleteBoard}: SettingsProps) => {
+const Settings = ({ onCloseSettings }: SettingsProps) => {
     const {updatePayload, showBoardPopup, closePopup} = usePopup();
     const navigate = useNavigate();
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
     const {toggleColorMode, colorMode, bg1, borderColor} = useThemeHook();
     const dispatch = useAppDispatch();
-    const selectedBoard = useAppSelector(selectCurrentBoard);
     const board = useAppSelector(selectBoardWithColumns);
+    const boards = useAppSelector(selectBoardNamesList);
+    const selectedBoard = useAppSelector(selectCurrentBoard);
+    const editableBoard = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
 
-    const handleSelectBoard = (b: any) => {
+    const handleSelectBoard = (b: Board) => {
         navigate(`/${b.id}`);
         dispatch(setCurrentBoard(b));
     }
 
-    const handleCreateBoard = ({name, columns, users, admins}: any) => {
-        onCreateBoard({name, columns, users, admins});
+    const handleCreateBoard = async ({name, columns, users, admins}: Board) => {
+        const newBoard: Board = {id: uuidv4(), name, columns, users, admins};
+        try {
+            const user = getUserFromSessionStorage();
+            await saveBoard({...newBoard, admins: [...admins, user.email]});
+            const boardAsListItem = {id: newBoard.id, name, users, admins, columns: []};
+            dispatch(setBoardNamesList([...boards, boardAsListItem]));
+            dispatch(setCurrentBoard(boardAsListItem));
+            closePopup();
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    const handleEditBoard = ({name, columns, users, admins}: any) => {
-        onEditBoard({name, columns, users, admins});
+    const handleEditBoard = async ({name, columns, users, admins}: Board) => {
+        const updatedBoard = {id: selectedBoard.id, name, columns, users, admins};
+        try {
+            await updateBoard(updatedBoard);
+            const boardAsListItem = {id: updatedBoard.id, name, users, admins, columns: []};
+            const copyBoards = deepCloneOfItem(boards);
+            const boardIndex = copyBoards.findIndex((b: BoardType) => b.id === boardAsListItem.id);
+            copyBoards[boardIndex] = boardAsListItem;
+            dispatch(setBoardNamesList(copyBoards));
+            dispatch(setCurrentBoard(boardAsListItem));
+            closePopup();
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    const handleDeleteBoard = () => {
-        onDeleteBoard();
+    const handleDeleteBoard = async () => {
+        const copyBoards = deepCloneOfItem(boards);
+        const boardIndex = copyBoards.findIndex((b: BoardType) => b.id === selectedBoard.id);
+        copyBoards.splice(boardIndex, 1);
+        try {
+            await deleteBoard(selectedBoard.id);
+            dispatch(setCurrentBoard(undefined as unknown as BoardType));
+            dispatch(setBoardWithColumns(undefined as unknown as BoardType));
+            dispatch(setBoardNamesList(copyBoards));
+            closePopup()
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     const handleOpenCreateBoardPopup = () => {
@@ -82,8 +122,8 @@ const Settings = ({ editableBoard, boards, onCloseSettings, onCreateBoard, onEdi
 
     const handleLogout = async () => {
         await logout();
-        dispatch(setCurrentBoard(undefined));
-        dispatch(setBoardWithColumns(undefined));
+        dispatch(setCurrentBoard(undefined as unknown as Board));
+        dispatch(setBoardWithColumns(undefined as unknown as Board));
         navigate(`/login`);
     }
 
@@ -108,10 +148,16 @@ const Settings = ({ editableBoard, boards, onCloseSettings, onCreateBoard, onEdi
 
             <Text fontSize='lg' px={4} mb={4} textTransform="uppercase">All boards ({boards.length})</Text>
 
-            <BoardList editableBoard={editableBoard} boards={boards} onSelectBoard={handleSelectBoard} onEditBoard={handleOpenEditBoardPopup}/>
+            <BoardList
+                editableBoard={editableBoard()}
+                boards={boards}
+                onSelectBoard={handleSelectBoard}
+                onEditBoard={handleOpenEditBoardPopup}
+            />
 
             <Flex px={4} mt={4} flexDirection="column" alignItems="flex-start">
-                <Button variant='link' color="bright1" textTransform="capitalize" onClick={handleOpenCreateBoardPopup} mb={4}>
+                <Button variant='link' color="bright1" textTransform="capitalize" onClick={handleOpenCreateBoardPopup}
+                        mb={4}>
                     <AddIcon w={3} h={3} mr={1}/> Create new board
                 </Button>
             </Flex>

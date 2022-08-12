@@ -4,8 +4,16 @@ import {useAppSelector} from "../hooks/reduxHooks";
 import {selectCurrentBoard} from "../slice/boardSlice";
 import {EditIcon} from '@chakra-ui/icons'
 import {MouseEvent} from "react";
+import {Board} from "../types/dataTypes";
 
-export const BoardList = ({editableBoard, boards, onSelectBoard, onEditBoard}: any) => {
+interface BoardListProps {
+    editableBoard: boolean,
+    boards: Board[],
+    onSelectBoard: (b: Board) => void,
+    onEditBoard: () => void,
+}
+
+export const BoardList = ({editableBoard, boards, onSelectBoard, onEditBoard}: BoardListProps) => {
     const {color} = useThemeHook();
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const isSelected = (id: string) => selectedBoard?.id === id;
@@ -17,30 +25,33 @@ export const BoardList = ({editableBoard, boards, onSelectBoard, onEditBoard}: a
         onEditBoard();
     }
 
-    return (boards.map((b: any) => (
-        <Box
-            key={b.id}
-            sx={{
-                borderBottomRightRadius: 20,
-                borderTopRightRadius: 20,
-                py: 2,
-                mr: 1,
-                backgroundColor: selectedBgColor(b.id),
-                color: selectedColor(b.id)
-            }}
-            onClick={() => {
-                onSelectBoard(b);
-            }}
-        >
-            <Link px={4} display="flex" alignItems="center" justifyContent="space-between">
-                {b.name}
-                {isSelected(b.id) && <IconButton
-                    disabled={!editableBoard}
-                    sx={{backgroundColor: 'transparent'}}
-                    aria-label="edit-icon"
-                    icon={<EditIcon/>}
-                    onClick={handleEditBoard}
-                    size='sm'/> }
-            </Link>
-        </Box>)))
+    console.log(editableBoard)
+    return (<>{
+        boards.map((b) => (
+            <Box
+                key={b.id}
+                sx={{
+                    borderBottomRightRadius: 20,
+                    borderTopRightRadius: 20,
+                    py: 2,
+                    mr: 1,
+                    backgroundColor: selectedBgColor(b.id),
+                    color: selectedColor(b.id)
+                }}
+                onClick={() => {
+                    onSelectBoard(b);
+                }}
+            >
+                <Link px={4} display="flex" alignItems="center" justifyContent="space-between">
+                    {b.name}
+                    {isSelected(b.id) && <IconButton
+                        disabled={!editableBoard}
+                        sx={{backgroundColor: 'transparent'}}
+                        aria-label="edit-icon"
+                        icon={<EditIcon/>}
+                        onClick={handleEditBoard}
+                        size='sm'/>}
+                </Link>
+            </Box>))
+    }</>)
 }

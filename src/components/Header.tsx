@@ -2,13 +2,23 @@ import {AddIcon, HamburgerIcon} from "@chakra-ui/icons";
 import { Button, Flex, Heading } from "@chakra-ui/react"
 import {useThemeHook} from "../hooks/useThemeHook";
 import {colors} from "../styles/themes";
+import {useAppSelector} from "../hooks/reduxHooks";
+import {selectCurrentBoard} from "../slice/boardSlice";
+import {getUserFromSessionStorage} from "../services/sessionService";
 
-export const Header = ({ toggleSettings, onOpenCreateTicketPopup, editableBoard, selectedBoardName }: any) => {
+interface HeaderProps {
+    toggleSettings: () => void,
+    onOpenCreateTicketPopup: () => void,
+}
+
+export const Header = ({ toggleSettings, onOpenCreateTicketPopup }: HeaderProps) => {
     const { bg1, borderColor } = useThemeHook();
+    const selectedBoard = useAppSelector(selectCurrentBoard);
+    const editableBoard = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
 
     return (
         <Flex backgroundColor={bg1} p={[2, 4]} borderBottom="1px solid" borderColor={borderColor} justifyContent="space-between" alignItems="center">
-            <Heading size='md'>{selectedBoardName}</Heading>
+            <Heading size='md'>{selectedBoard?.name || ''}</Heading>
             <Flex justifyContent="space-between">
                 <Button sx={{
                     backgroundColor: colors.bright1,

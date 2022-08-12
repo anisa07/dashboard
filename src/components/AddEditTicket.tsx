@@ -5,6 +5,7 @@ import {AddIcon, DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {ChangeEvent, useState} from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { getDoneSubtasks } from "../helpers/helperFunc";
+import {Column, Mode, Subtask, TicketEntity} from "../types/dataTypes";
 
 export const AddEditTicket = () => {
     const {closePopup, payload} = usePopup();
@@ -13,7 +14,7 @@ export const AddEditTicket = () => {
     const [ticketName, setTicketName] = useState(name || '');
     const [ticketStatus, setTicketStatus] = useState(status || '');
     const [ticketDescription, setTicketDescription] = useState(description || '');
-    const [ticketSubtasks, setTicketSubtasks] = useState<any[]>(subtasks || []);
+    const [ticketSubtasks, setTicketSubtasks] = useState<Subtask[]>(subtasks || []);
 
     const handleSetTicketName = (e: ChangeEvent<HTMLInputElement>) => {
         setTicketName(e.target?.value || '');
@@ -77,7 +78,7 @@ export const AddEditTicket = () => {
                         onSubmit={handleSubmitTicket}
                         onClose={closePopup}>
             {
-                (mode === 'create' || editTicket) ? <Flex flexDirection="column">
+                (mode === Mode.CREATE || editTicket) ? <Flex flexDirection="column">
                     <Box my={2}>
                         <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Title</Text>
                         <Input
@@ -101,7 +102,7 @@ export const AddEditTicket = () => {
 
                     <Box my={2}>
                         <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Subtasks</Text>
-                        {ticketSubtasks.map((s: any, index: number) => (
+                        {ticketSubtasks.map((s: Subtask, index: number) => (
                             <Flex key={s.id} mb={2}>
                                 <Input
                                     mr={2}
@@ -130,7 +131,7 @@ export const AddEditTicket = () => {
                     <Box my={2}>
                         <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Status</Text>
                         <Select placeholder='Select ticket status' value={ticketStatus} onChange={handleSelectStatus}>
-                            {statusList.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            {statusList.map((s: Column) => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </Select>
                     </Box>
                 </Flex> : <>
@@ -147,7 +148,7 @@ export const AddEditTicket = () => {
                         <Box my={2}>
                             <Text mb={1} fontWeight="bold" fontSize="sm" >Subtasks ({getDoneSubtasks(subtasks)})</Text>
                             <Stack spacing={1} direction='column'>
-                                { ticketSubtasks.map((s:any, index: number) => (
+                                { ticketSubtasks.map((s:Subtask, index: number) => (
                                     <Box key={s.id}>
                                         <Checkbox
                                             colorScheme='purple'
@@ -164,7 +165,7 @@ export const AddEditTicket = () => {
                         <Box my={2}>
                             <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Status</Text>
                             <Select placeholder='Select ticket status' value={ticketStatus} onChange={handleSelectStatus}>
-                                {statusList.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                {statusList.map((s: Column) => <option key={s.id} value={s.id}>{s.name}</option>)}
                             </Select>
                         </Box>
                     </Flex>

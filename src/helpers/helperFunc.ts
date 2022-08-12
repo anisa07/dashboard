@@ -1,3 +1,4 @@
+import {Subtask} from "../types/dataTypes";
 
 export const isMobileDevice = () => {
     const agent = (navigator?.userAgent || '').toLowerCase();
@@ -9,8 +10,8 @@ export const isMobileDevice = () => {
     }
 }
 
-export const getDoneSubtasks = (subtasks: any[]) => {
-    const doneSubtasks = subtasks.filter((s: any) => s.done);
+export const getDoneSubtasks = (subtasks: Subtask[]) => {
+    const doneSubtasks = subtasks.filter(s => s.done);
     return `${doneSubtasks.length} of ${subtasks.length}`
 }
 
