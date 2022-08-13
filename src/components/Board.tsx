@@ -77,7 +77,6 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
         if (dragIndex > -1 && dragIndex !== hoverIndex) {
             const item = copyColumnWithCard.cards.splice(dragIndex, 1);
             copyColumnWithCard.cards.splice(hoverIndex, 0, item[0]);
-            await updateBoard(copySelectedBoardWithColumns);
         }
 
         // change column
@@ -87,10 +86,10 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
             const prevColumnIndex = copySelectedBoardWithColumns.columns.findIndex(c => c.id === currentColumnId);
             const copyPrevColumn = copySelectedBoardWithColumns.columns[prevColumnIndex];
             copyPrevColumn.cards = copyPrevColumn.cards.filter(c => c.id !== cardUpdateToSave.id);
-            await updateBoard(copySelectedBoardWithColumns);
         }
 
         dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
+        await updateBoard(copySelectedBoardWithColumns);
     }
 
     const handleUpdateColumn = async ({ columnName, columnId }: ColumnUpdateProps) => {

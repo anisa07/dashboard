@@ -60,17 +60,17 @@ export const EditableEntity = ({title, entities, setEntities, placeholder, editC
                     onKeyDown={handleSetEntities}
                     onChange={handleSetEntity}
                 />
-                <IconButton aria-label='Add' variant='outline' colorScheme='purple' icon={<CheckIcon />} onClick={handleAddEntity}/>
+                <IconButton aria-label='Add' variant='ghost' colorScheme='purple' icon={<CheckIcon />} onClick={handleAddEntity}/>
             </Flex>
             {entities.length > 0 && <Text mb={1} fontSize="md" textTransform="capitalize">Existing Items</Text>}
             <List mr={1} mb={2}>
                 {entities.map((c: string|Column, index: number) => {
                     return (<ListItem key={index} mb={1} sx={{ display: 'block' }}>
-                        <Flex justifyContent="space-between">
+                        <Flex alignItems="center" justifyContent="space-between">
                             { typeof c === 'string' ? c : c.name }
                             <Box>
-                                <IconButton aria-label='Edit' variant='outline' colorScheme='purple' icon={<EditIcon />} mr={1} onClick={() => { handleEditEntity(index) }}/>
-                                <IconButton aria-label='Delete' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={() => { handleDeleteEntity(index) }} />
+                                <IconButton aria-label='Edit' variant='ghost' colorScheme='purple' icon={<EditIcon />} mr={1} onClick={() => { handleEditEntity(index) }}/>
+                                <IconButton aria-label='Delete' variant='ghost' colorScheme='red' icon={<DeleteIcon />} onClick={() => { handleDeleteEntity(index) }} />
                             </Box>
                         </Flex>
                     </ListItem>)})}

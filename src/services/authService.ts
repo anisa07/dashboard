@@ -21,8 +21,12 @@ export const login = async ({email, password}: Auth) => {
         const accessToken = await user.getIdToken();
         saveUserToSessionStorage({email, accessToken, uid: user.uid});
     } catch (err: any) {
-        console.error(err);
-        throw new Error(err.message);
+        if (err.message.includes('auth/wrong-password')) {
+            throw new Error("Password or email is incorrect");
+        }
+        if (err.message.includes('auth/user-not-found')) {
+            throw new Error("User not registered");
+        }
     }
 }
 
@@ -31,8 +35,7 @@ export const logout = async () => {
         await signOut(auth);
         clearSessionStorage();
     } catch (err) {
-        console.error(err);
-        // alert(err.message);
+        throw new Error("Error during logout");
     }
 }
 
@@ -49,7 +52,6 @@ export const signup = async ({email, password, name}: User) => {
             email
         });
     } catch (err) {
-        console.error(err);
-        // alert(err.message);
+        throw new Error("Error during signup");
     }
 };

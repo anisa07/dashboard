@@ -114,7 +114,7 @@ export const AddEditTicket = () => {
                                 />
                                 <IconButton
                                     aria-label='Delete'
-                                    variant='outline'
+                                    variant='ghost'
                                     colorScheme='red'
                                     icon={<DeleteIcon/>}
                                     onClick={() => {
@@ -171,7 +171,7 @@ export const AddEditTicket = () => {
                     </Flex>
                 </>
             }
-            { editTicket && <>Delete Card <IconButton aria-label='Delete card' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={handleDeleteCard} /></> }
+            { editTicket && <>Delete Card <IconButton aria-label='Delete card' variant='ghost' colorScheme='red' icon={<DeleteIcon />} onClick={handleDeleteCard} /></> }
         </PopupContainer>
     )
 }

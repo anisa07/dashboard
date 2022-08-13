@@ -1,15 +1,22 @@
-import {Button, Flex, Box, Text} from "@chakra-ui/react"
+import {Button, Flex, Box, Text, useDisclosure} from "@chakra-ui/react"
 import {useFormCustomHook} from "../hooks/useFormHook";
 import {FormDataType} from "../types/validationTypes";
 import {ensureEmail, ensureNotEmpty, ensurePasswordsAreEqual} from "../rules/validation";
 import {colors} from "../styles/themes";
-import {FormEvent, useEffect} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {FormInput} from "../components/FormInput";
 import {useNavigate, Link} from "react-router-dom";
 import {getUserFromSessionStorage} from "../services/sessionService";
 import {signup} from "../services/authService";
+import {AlertMessage} from "../components/AlertMessage";
 
 export const Signup = () => {
+    const {
+        isOpen,
+        onClose,
+        onOpen
+    } = useDisclosure({ defaultIsOpen: false })
+
     const formData: FormDataType = {
         email: {
             errorMessage: "",
@@ -38,6 +45,7 @@ export const Signup = () => {
     };
     const { onChange, isValid, form, cleanFormData } = useFormCustomHook({...formData});
     const navigate = useNavigate();
+    const [serviceError, setServiceError] = useState('');
 
     useEffect(() => {
         if (getUserFromSessionStorage()) {
@@ -47,13 +55,18 @@ export const Signup = () => {
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await signup({
-            email: form.email.value,
-            name: form.name.value,
-            password: form.password.value,
-        });
-        cleanFormData();
-        navigate("/")
+        try {
+            await signup({
+                email: form.email.value,
+                name: form.name.value,
+                password: form.password.value,
+            });
+            cleanFormData();
+            navigate("/")
+        } catch (e: any) {
+            setServiceError(e.message);
+            onOpen()
+        }
     }
 
     return (
@@ -101,6 +114,7 @@ export const Signup = () => {
                     </Button>
                     <Link to="/login">Have an account? Just login!</Link>
                 </Flex>
+                <AlertMessage text={serviceError} status="error" isOpen={isOpen} onClose={onClose} />
             </form>
         </Box>
     )

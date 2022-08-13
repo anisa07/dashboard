@@ -24,7 +24,7 @@ export const Header = ({ toggleSettings, onOpenCreateTicketPopup }: HeaderProps)
                     backgroundColor: colors.bright1,
                     textTransform: 'capitalize',
                     color: colors.light1
-                }} variant='solid' onClick={onOpenCreateTicketPopup} disabled={!editableBoard}>
+                }} variant='solid' onClick={onOpenCreateTicketPopup} disabled={!editableBoard || !selectedBoard}>
                     <AddIcon w={3} h={3} mr={1}/> add new task
                 </Button>
 

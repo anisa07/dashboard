@@ -61,7 +61,7 @@ export const AddEditBoard = () => {
                 setEntities={setUsers}
             />
 
-            { mode === Mode.EDIT && <>Delete Board <IconButton aria-label='Delete board' variant='outline' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteBoard} /></> }
+            { mode === Mode.EDIT && <>Delete Board <IconButton aria-label='Delete board' variant='ghost' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteBoard} /></> }
         </PopupContainer>
     )
 }

@@ -136,7 +136,7 @@ export const BoardCard = ({card, onOpenCardDetails, editableBoard}: any) => {
                 }}>{card.name}</Text>
                 <ViewIcon
                     sx={{
-                        opacity: mouseOver ? .75 : .1,
+                        opacity: mouseOver ? .55 : .1,
                         w: 4,
                         h: 4,
                         ml: 1
