@@ -119,7 +119,6 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
         }
     }
 
-    console.log('editableBoard()', selectedBoard?.admins)
     return (
         <Flex sx={{
             backgroundColor: bg2,

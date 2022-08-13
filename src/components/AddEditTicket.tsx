@@ -72,7 +72,7 @@ export const AddEditTicket = () => {
     }
 
     return (
-        <PopupContainer submitTitle={mode === "create" ? "create task" : ""}
+        <PopupContainer submitTitle={mode === Mode.CREATE ? "create task" : ""}
                         title={title}
                         disabled={!ticketName && !ticketStatus}
                         onSubmit={handleSubmitTicket}

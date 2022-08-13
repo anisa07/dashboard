@@ -25,7 +25,6 @@ export const BoardList = ({editableBoard, boards, onSelectBoard, onEditBoard}: B
         onEditBoard();
     }
 
-    console.log(editableBoard)
     return (<>{
         boards.map((b) => (
             <Box

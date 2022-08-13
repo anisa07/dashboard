@@ -5,7 +5,7 @@ import {useThemeHook} from "../hooks/useThemeHook";
 import {memo} from "react";
 import {EditIcon} from "@chakra-ui/icons";
 import {usePopup} from "../hooks/usePopup";
-import {CardUpdateProps, Column, ColumnUpdateProps} from "../types/dataTypes";
+import {CardUpdateProps, Column, ColumnUpdateProps, Mode} from "../types/dataTypes";
 
 interface BoardColumnProps {
     column: Column,
@@ -50,7 +50,7 @@ const BoardColumn = ({column, editableBoard, onDeleteColumn, onUpdateColumn, onU
             onUpdateColumn,
             title: 'Edit column',
             name: column.name,
-            mode: 'edit',
+            mode: Mode.EDIT,
             columnId: column.id,
         });
         showColumnPopup();

@@ -22,7 +22,7 @@ import {
 } from "../slice/boardSlice";
 import {useNavigate} from "react-router-dom";
 import {logout} from "../services/authService";
-import {Board as BoardType, Board} from "../types/dataTypes";
+import {Board as BoardType, Board, Mode} from "../types/dataTypes";
 import {v4 as uuidv4} from "uuid";
 import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
 import {deepCloneOfItem} from "../helpers/helperFunc";
@@ -49,11 +49,11 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
     }
 
     const handleCreateBoard = async ({name, columns, users, admins}: Board) => {
-        const newBoard: Board = {id: uuidv4(), name, columns, users, admins};
+        const user = getUserFromSessionStorage();
+        const newBoard: Board = {id: uuidv4(), name, columns, users, admins: [...admins, user.email]};
         try {
-            const user = getUserFromSessionStorage();
-            await saveBoard({...newBoard, admins: [...admins, user.email]});
-            const boardAsListItem = {id: newBoard.id, name, users, admins, columns: []};
+            await saveBoard(newBoard);
+            const boardAsListItem = {id: newBoard.id, name, users, admins: [...admins, user.email], columns: []};
             dispatch(setBoardNamesList([...boards, boardAsListItem]));
             dispatch(setCurrentBoard(boardAsListItem));
             closePopup();
@@ -100,7 +100,7 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
             users: [],
             title: 'Add board',
             name: '',
-            mode: 'create',
+            mode: Mode.CREATE,
             onUpdateBoard: handleCreateBoard,
         });
         showBoardPopup();
@@ -113,7 +113,7 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
             userList: board.users,
             title: 'Edit board',
             name: board.name,
-            mode: 'edit',
+            mode: Mode.EDIT,
             onUpdateBoard: handleEditBoard,
             onDeleteBoard: handleDeleteBoard
         });
