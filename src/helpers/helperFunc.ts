@@ -18,3 +18,8 @@ export const getDoneSubtasks = (subtasks: Subtask[]) => {
 export function deepCloneOfItem<T>(item: T) {
     return JSON.parse(JSON.stringify(item));
 }
+
+export const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message
+    return String(error)
+}

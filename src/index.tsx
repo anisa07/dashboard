@@ -10,10 +10,12 @@ import {
 } from "react-router-dom";
 import {Login} from './pages/Login';
 import {theme} from './styles/themes';
-import { PopupProvider } from './provider/PopupProvider';
+import {PopupProvider} from './provider/PopupProvider';
 import {Provider} from "react-redux";
 import {store} from "./store/store";
 import {Signup} from "./pages/Signup";
+import {AlertProvider} from "./provider/AlertProvider";
+import {AlertMessage} from "./components/AlertMessage";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -22,17 +24,22 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <ChakraProvider theme={theme}>
-            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+            <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
             <Provider store={store}>
                 <PopupProvider>
-                    <BrowserRouter>
-                        <Routes>
-                            <Route path="/" element={<Dashboard/>}/>
-                            <Route path="/:id" element={<Dashboard/>}/>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/signup" element={<Signup/>}/>
-                        </Routes>
-                    </BrowserRouter>
+                    <AlertProvider>
+                        <>
+                            <AlertMessage />
+                            <BrowserRouter>
+                                <Routes>
+                                    <Route path="/" element={<Dashboard/>}/>
+                                    <Route path="/:id" element={<Dashboard/>}/>
+                                    <Route path="/login" element={<Login/>}/>
+                                    <Route path="/signup" element={<Signup/>}/>
+                                </Routes>
+                            </BrowserRouter>
+                        </>
+                    </AlertProvider>
                 </PopupProvider>
             </Provider>
         </ChakraProvider>

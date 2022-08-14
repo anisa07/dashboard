@@ -1,24 +1,27 @@
 import {
     Alert,
     AlertIcon,
-    AlertTitle, CloseButton
+    AlertTitle, Flex, CloseButton
 } from '@chakra-ui/react'
+import {useAlert} from "../hooks/useAlert";
 
-interface AlertMessageProps {
-    text: string,
-    status: "info" | "warning" | "success" | "error" | "loading" | undefined,
-    isOpen: boolean,
-    onClose: () => void
-}
-
-export const AlertMessage = ({ text, status, isOpen, onClose }: AlertMessageProps) => {
-    return isOpen ? <Alert status={status} sx={{ my: '2rem' }} >
-        <AlertIcon />
-        <AlertTitle>{text}</AlertTitle>
+export const AlertMessage = () => {
+    const {text, status, isAlertOpen, closeAlert} = useAlert()
+    return isAlertOpen ? <Alert status={status} sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        zIndex: 10,
+        marginTop: -5
+    }}>
+        <Flex>
+            <AlertIcon/>
+            <AlertTitle>{text}</AlertTitle>
+        </Flex>
         <CloseButton
             alignSelf='flex-start'
             position='relative'
-            onClick={onClose}
+            onClick={closeAlert}
         />
     </Alert> : null
 }
