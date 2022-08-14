@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import reportWebVitals from './reportWebVitals';
 import {
     BrowserRouter,
+    HashRouter,
     Routes,
     Route,
 } from "react-router-dom";
@@ -21,7 +22,15 @@ import {PageNotFound} from "./pages/PageNotFound";
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
-
+function CustomRoutes() {
+    return <Routes>
+        <Route path="/" element={<Dashboard/>}/>
+        <Route path="/:id" element={<Dashboard/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/signup" element={<Signup/>}/>
+        <Route path="*" element={<PageNotFound/>} />
+    </Routes>
+}
 root.render(
     <React.StrictMode>
         <ChakraProvider theme={theme}>
@@ -31,15 +40,9 @@ root.render(
                     <AlertProvider>
                         <>
                             <AlertMessage />
-                            <BrowserRouter>
-                                <Routes>
-                                    <Route path="/" element={<Dashboard/>}/>
-                                    <Route path="/:id" element={<Dashboard/>}/>
-                                    <Route path="/login" element={<Login/>}/>
-                                    <Route path="/signup" element={<Signup/>}/>
-                                    <Route path="*" element={<PageNotFound/>} />
-                                </Routes>
-                            </BrowserRouter>
+                            <HashRouter basename={process.env.PUBLIC_URL}>
+                                <CustomRoutes />
+                            </HashRouter>
                         </>
                     </AlertProvider>
                 </PopupProvider>
