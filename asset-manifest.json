@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.22d90fbe.css",
+    "main.js": "/static/js/main.53e15931.js",
+    "static/js/787.9d2d08f9.chunk.js": "/static/js/787.9d2d08f9.chunk.js",
+    "static/media/alatsi-all-400-normal.woff": "/static/media/alatsi-all-400-normal.d3c2b97850e40be59164.woff",
+    "static/media/alatsi-latin-400-normal.woff2": "/static/media/alatsi-latin-400-normal.4b7e94e10a63457db6e4.woff2",
+    "static/media/alatsi-latin-ext-400-normal.woff2": "/static/media/alatsi-latin-ext-400-normal.bc1b9c7c20733f41f197.woff2",
+    "static/media/alatsi-vietnamese-400-normal.woff2": "/static/media/alatsi-vietnamese-400-normal.2e02ff93a0ee465d62fe.woff2",
+    "index.html": "/index.html",
+    "main.22d90fbe.css.map": "/static/css/main.22d90fbe.css.map",
+    "main.53e15931.js.map": "/static/js/main.53e15931.js.map",
+    "787.9d2d08f9.chunk.js.map": "/static/js/787.9d2d08f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.22d90fbe.css",
+    "static/js/main.53e15931.js"
+  ]
+}
