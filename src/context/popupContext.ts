@@ -10,7 +10,7 @@ interface PopupContextProps<T = unknown> {
     showColumnPopup: () => void;
     showBoardPopup: () => void;
     closePopup: () => void;
-};
+}
 
 export const PopupContext = createContext<PopupContextProps>({
     payload: undefined,

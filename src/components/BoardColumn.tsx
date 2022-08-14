@@ -16,7 +16,7 @@ interface BoardColumnProps {
     onOpenCardDetails: (cardId: string, prevColumnId: string) => void,
 }
 
-const BoardColumn = ({column, editableBoard, onDeleteColumn, onUpdateColumn, onUpdateBoard, onOpenCardDetails}: BoardColumnProps) => {
+function BoardColumn ({column, editableBoard, onDeleteColumn, onUpdateColumn, onUpdateBoard, onOpenCardDetails}: BoardColumnProps) {
     const {
         updatePayload, showColumnPopup
     } = usePopup();

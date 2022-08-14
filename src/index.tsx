@@ -16,6 +16,7 @@ import {store} from "./store/store";
 import {Signup} from "./pages/Signup";
 import {AlertProvider} from "./provider/AlertProvider";
 import {AlertMessage} from "./components/AlertMessage";
+import {PageNotFound} from "./pages/PageNotFound";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -36,6 +37,7 @@ root.render(
                                     <Route path="/:id" element={<Dashboard/>}/>
                                     <Route path="/login" element={<Login/>}/>
                                     <Route path="/signup" element={<Signup/>}/>
+                                    <Route path="*" element={<PageNotFound/>} />
                                 </Routes>
                             </BrowserRouter>
                         </>

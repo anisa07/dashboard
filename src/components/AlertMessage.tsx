@@ -4,15 +4,26 @@ import {
     AlertTitle, Flex, CloseButton
 } from '@chakra-ui/react'
 import {useAlert} from "../hooks/useAlert";
+import {useEffect} from "react";
 
 export const AlertMessage = () => {
-    const {text, status, isAlertOpen, closeAlert} = useAlert()
-    return isAlertOpen ? <Alert status={status} sx={{
+    const {text, status, isAlertOpen, closeAlert} = useAlert();
+
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            closeAlert();
+        }, 5000)
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [])
+
+    return isAlertOpen ? <Alert  status={status} sx={{
         display: 'flex',
         justifyContent: 'space-between',
         position: 'absolute',
-        zIndex: 10,
-        marginTop: -5
+        zIndex: 20,
+        marginTop: 0
     }}>
         <Flex>
             <AlertIcon/>

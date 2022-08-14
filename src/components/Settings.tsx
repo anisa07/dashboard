@@ -25,14 +25,15 @@ import {logout} from "../services/authService";
 import {Board as BoardType, Board, Mode} from "../types/dataTypes";
 import {v4 as uuidv4} from "uuid";
 import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
-import {deepCloneOfItem} from "../helpers/helperFunc";
+import {deepCloneOfItem, getErrorMessage} from "../helpers/helperFunc";
 import {getUserFromSessionStorage} from "../services/sessionService";
+import {useAlert} from "../hooks/useAlert";
 
 interface SettingsProps {
     onCloseSettings: () => void;
 }
 
-const Settings = ({ onCloseSettings }: SettingsProps) => {
+function Settings({ onCloseSettings }: SettingsProps) {
     const {updatePayload, showBoardPopup, closePopup} = usePopup();
     const navigate = useNavigate();
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
@@ -42,6 +43,7 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
     const boards = useAppSelector(selectBoardNamesList);
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const editableBoard = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
+    const { openAlert } = useAlert();
 
     const handleSelectBoard = (b: Board) => {
         navigate(`/${b.id}`);
@@ -57,8 +59,8 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
             dispatch(setBoardNamesList([...boards, boardAsListItem]));
             dispatch(setCurrentBoard(boardAsListItem));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 
@@ -73,8 +75,8 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
             dispatch(setBoardNamesList(copyBoards));
             dispatch(setCurrentBoard(boardAsListItem));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 
@@ -88,8 +90,8 @@ const Settings = ({ onCloseSettings }: SettingsProps) => {
             dispatch(setBoardWithColumns(undefined as unknown as BoardType));
             dispatch(setBoardNamesList(copyBoards));
             closePopup()
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 

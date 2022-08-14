@@ -11,7 +11,7 @@ import {signup} from "../services/authService";
 import {useAlert} from "../hooks/useAlert";
 import {getErrorMessage} from "../helpers/helperFunc";
 
-export const Signup = () => {
+export function Signup () {
     const formData: FormDataType = {
         email: {
             errorMessage: "",
@@ -58,7 +58,7 @@ export const Signup = () => {
             });
             cleanFormData();
             navigate("/")
-        } catch (e: any) {
+        } catch (e: unknown) {
             openAlert(getErrorMessage(e), 'error');
         }
     }
@@ -66,7 +66,7 @@ export const Signup = () => {
     return (
         <Box sx={{ width: {'base': '90%', md: 500}, mx: 'auto', my: 5 }}>
             <form>
-                <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Login</Text>
+                <Text mb={1} fontWeight="bold" fontSize="md" textTransform="capitalize">Signup</Text>
                 <FormInput
                     formElement={form.email}
                     label="Email"

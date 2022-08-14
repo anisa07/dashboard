@@ -18,6 +18,10 @@ export const AddEditColumn = () => {
         setColumnName(e?.target?.value || '');
     }
 
+    const handleDeleteColumn = () => {
+        onDeleteColumn(columnId)
+    }
+
     return (
         <PopupContainer title={title} disabled={!columnName} onSubmit={handleUpdateColumn} onClose={closePopup}>
             <Text mb={1} fontSize="md" textTransform="capitalize">Column name</Text>
@@ -28,7 +32,7 @@ export const AddEditColumn = () => {
                 value={columnName}
                 onChange={handleSetName}
             />
-            { mode === Mode.EDIT && <> Delete Column <IconButton aria-label='Delete column' variant='ghost' colorScheme='red' icon={<DeleteIcon />} onClick={onDeleteColumn} /></> }
+            { mode === Mode.EDIT && <> Delete Column <IconButton aria-label='Delete column' variant='ghost' colorScheme='red' icon={<DeleteIcon />} onClick={handleDeleteColumn} /></> }
         </PopupContainer>
     )
 }

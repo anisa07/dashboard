@@ -2,6 +2,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut} fr
 import { collection, addDoc } from "firebase/firestore";
 import {clearSessionStorage, saveUserToSessionStorage} from "./sessionService";
 import {auth, db} from "../firebase";
+import {getErrorMessage} from "../helpers/helperFunc";
 
 interface Auth {
     email: string,
@@ -20,11 +21,11 @@ export const login = async ({email, password}: Auth) => {
         const user = res.user;
         const accessToken = await user.getIdToken();
         saveUserToSessionStorage({email, accessToken, uid: user.uid});
-    } catch (err: any) {
-        if (err.message.includes('auth/wrong-password')) {
+    } catch (err: unknown) {
+        if (getErrorMessage(err).includes('auth/wrong-password')) {
             throw new Error("Password or email is incorrect");
         }
-        if (err.message.includes('auth/user-not-found')) {
+        if (getErrorMessage(err).includes('auth/user-not-found')) {
             throw new Error("User not registered");
         }
     }
@@ -51,7 +52,10 @@ export const signup = async ({email, password, name}: User) => {
             authProvider: "local",
             email
         });
-    } catch (err) {
+    } catch (err: unknown) {
+        if (getErrorMessage(err).includes('auth/email-already-in-use')) {
+            throw new Error("Email already in use");
+        }
         throw new Error("Error during signup");
     }
 };

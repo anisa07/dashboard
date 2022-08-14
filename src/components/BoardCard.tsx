@@ -15,7 +15,7 @@ interface MovableCardProps {
     onUpdateBoard: (update: CardUpdateProps) => void
 }
 
-const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails, editableBoard}: MovableCardProps) => {
+function MovableCard ({card, onUpdateBoard, index, currentColumnId, onOpenCardDetails, editableBoard}: MovableCardProps) {
     const ref = useRef(null);
 
     const [, drop] = useDrop({
@@ -93,7 +93,7 @@ const MovableCard = ({card, onUpdateBoard, index, currentColumnId, onOpenCardDet
 
 }
 
-export const BoardCard = ({card, onOpenCardDetails, editableBoard}: any) => {
+export function BoardCard ({card, onOpenCardDetails, editableBoard}: any) {
     const {bg1} = useThemeHook();
     const [mouseOver, setMouseOver] = useState(false);
 

@@ -11,7 +11,7 @@ import {login} from "../services/authService";
 import {useAlert} from "../hooks/useAlert";
 import {getErrorMessage} from "../helpers/helperFunc";
 
-export const Login = () => {
+export function Login () {
     const { openAlert } = useAlert();
 
     const formData: FormDataType = {

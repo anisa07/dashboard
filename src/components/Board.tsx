@@ -8,12 +8,13 @@ import {memo, useCallback, useEffect, useState} from "react";
 import {useThemeHook} from "../hooks/useThemeHook";
 import {AddIcon} from "@chakra-ui/icons";
 import {usePopup} from "../hooks/usePopup";
-import {deepCloneOfItem, isMobileDevice} from "../helpers/helperFunc";
-import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
-import {getBoardData, selectBoardWithColumns, selectCurrentBoard, setBoardWithColumns} from "../slice/boardSlice";
+import {deepCloneOfItem, getErrorMessage, isMobileDevice} from "../helpers/helperFunc";
+import {useAppSelector} from "../hooks/reduxHooks";
+import {selectBoardWithColumns, selectCurrentBoard} from "../slice/boardSlice";
 import {updateBoard} from "../services/boardService";
 import {getUserFromSessionStorage} from "../services/sessionService";
 import {Board as BoardType, Card, CardUpdateProps, ColumnCreateProps, ColumnUpdateProps} from "../types/dataTypes";
+import {useAlert} from "../hooks/useAlert";
 
 interface BoardProps {
     onOpenViewTicketPopup: (cardId: string, prevColumnId: string) => void
@@ -23,16 +24,10 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
     const { showColumnPopup, closePopup, updatePayload } = usePopup();
     const {bg2} = useThemeHook();
     const [isMobile, setIsMobile] = useState(false);
-    const dispatch = useAppDispatch();
     const board = useAppSelector(selectBoardWithColumns);
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const editableBoard = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
-
-    useEffect(() => {
-        if (selectedBoard) {
-            dispatch(getBoardData(selectedBoard.id));
-        }
-    }, [selectedBoard])
+    const { openAlert } = useAlert();
 
     useEffect(() => {
         setIsMobile(!!isMobileDevice());
@@ -45,10 +40,9 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
         copySelectedBoardWithColumns.columns.push({id: newColumnId, name: columnName, cards: []});
         try {
             await updateBoard(copySelectedBoardWithColumns);
-            dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 
@@ -88,8 +82,11 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
             copyPrevColumn.cards = copyPrevColumn.cards.filter(c => c.id !== cardUpdateToSave.id);
         }
 
-        dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
-        await updateBoard(copySelectedBoardWithColumns);
+        try {
+            await updateBoard(copySelectedBoardWithColumns);
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
+        }
     }
 
     const handleUpdateColumn = async ({ columnName, columnId }: ColumnUpdateProps) => {
@@ -98,10 +95,9 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
         copySelectedBoardWithColumns.columns[columnIndex].name = columnName;
         try {
             await updateBoard(copySelectedBoardWithColumns);
-            dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 
@@ -111,10 +107,9 @@ const Board = ({onOpenViewTicketPopup}: BoardProps) => {
         copySelectedBoardWithColumns.columns.splice(columnIndex, 1);
         try {
             await updateBoard(copySelectedBoardWithColumns);
-            dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 

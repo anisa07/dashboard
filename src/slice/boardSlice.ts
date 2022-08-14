@@ -1,5 +1,4 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {fetchBoardData, fetchBoardNames} from "../services/boardService";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../types/storeTypes";
 import {Board} from "../types/dataTypes";
 
@@ -15,20 +14,6 @@ const initialState: BoardState = {
     currentBoard: undefined as unknown as Board
 };
 
-export const getBoardNameList = createAsyncThunk('board/boardNamesList', async () => {
-    const boardNamesList: Board[] = await fetchBoardNames();
-    return {
-        boardNamesList
-    }
-});
-
-export const getBoardData = createAsyncThunk('board/boardData', async (id: string) => {
-   const boardData: Board = await fetchBoardData(id) as unknown as Board;
-    return {
-        boardWithColumns: boardData
-    }
-});
-
 export const boardSlice = createSlice({
     name: 'board',
     initialState,
@@ -42,15 +27,6 @@ export const boardSlice = createSlice({
         setBoardNamesList: (state, action: PayloadAction<Board[]>) => {
             state.boardNamesList = action.payload || [];
         }
-    },
-    extraReducers: builder => {
-        builder
-            .addCase(getBoardNameList.fulfilled, (state, {payload}) => {
-                state.boardNamesList = payload.boardNamesList;
-            })
-            .addCase(getBoardData.fulfilled, (state, {payload}) => {
-                state.boardWithColumns = payload.boardWithColumns
-            })
     },
 });
 

@@ -13,7 +13,7 @@ interface BoardListProps {
     onEditBoard: () => void,
 }
 
-export const BoardList = ({editableBoard, boards, onSelectBoard, onEditBoard}: BoardListProps) => {
+export function BoardList ({editableBoard, boards, onSelectBoard, onEditBoard}: BoardListProps) {
     const {color} = useThemeHook();
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const isSelected = (id: string) => selectedBoard?.id === id;

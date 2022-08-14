@@ -5,7 +5,7 @@ import {AddIcon, DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {ChangeEvent, useState} from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { getDoneSubtasks } from "../helpers/helperFunc";
-import {Column, Mode, Subtask, TicketEntity} from "../types/dataTypes";
+import {Column, Mode, Subtask} from "../types/dataTypes";
 
 export const AddEditTicket = () => {
     const {closePopup, payload} = usePopup();

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {Settings} from "../components/Settings";
 import {Board} from "../components/Board";
 import {Flex, useMediaQuery} from '@chakra-ui/react';
@@ -8,13 +8,15 @@ import {Popup} from '../components/Popup';
 import {AddEditBoard} from '../components/AddEditBoard';
 import {AddEditTicket} from '../components/AddEditTicket';
 import {AddEditColumn} from '../components/AddEditColumn';
-import {useAppDispatch, useAppSelector} from "../hooks/reduxHooks";
-import {getBoardNameList, selectBoardWithColumns, setBoardWithColumns,} from "../slice/boardSlice";
-import {updateBoard} from "../services/boardService";
-import {deepCloneOfItem} from "../helpers/helperFunc";
+import {useAppSelector} from "../hooks/reduxHooks";
+import {selectBoardWithColumns, selectCurrentBoard,} from "../slice/boardSlice";
+import {fetchBoardData, fetchBoardNames, updateBoard} from "../services/boardService";
+import {deepCloneOfItem, getErrorMessage} from "../helpers/helperFunc";
 import {getUserFromSessionStorage} from "../services/sessionService";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Board as BoardType, Mode, TicketEntity} from '../types/dataTypes'
+import {store} from "../store/store";
+import {useAlert} from "../hooks/useAlert";
 
 function Dashboard() {
     const {
@@ -26,20 +28,35 @@ function Dashboard() {
         closePopup
     } = usePopup();
     const board = useAppSelector(selectBoardWithColumns);
+    const selectedBoard = useAppSelector(selectCurrentBoard);
     const [isLargerThanSm] = useMediaQuery('(min-width: 31em)');
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { id } = useParams();
+    const { openAlert } = useAlert();
 
     useEffect(() => {
         const userExists = !!getUserFromSessionStorage();
         if (userExists) {
-            dispatch(getBoardNameList())
+            fetchBoardNames().then((boardsList: BoardType[]) => {
+                console.log(boardsList)
+                store.dispatch({type: 'board/setBoardNamesList', payload: boardsList})
+            }).catch((e: unknown) => {
+                openAlert(getErrorMessage(e), 'error')
+            })
         } else {
             navigate('/login')
         }
     }, []);
 
-    const [showSettings, setShowSettings] = useState(false);
+    useEffect(() => {
+        if (id && selectedBoard?.id) {
+            fetchBoardData(selectedBoard.id).catch((e: unknown) => {
+                openAlert(getErrorMessage(e), 'error')
+            })
+        }
+    }, [id, selectedBoard])
+
+    const [showSettings, setShowSettings] = useState(true);
 
     const handleCloseSettings = () => {
         setShowSettings(false);
@@ -78,10 +95,9 @@ function Dashboard() {
 
         try {
             await updateBoard(copySelectedBoardWithColumns);
-            dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
             closePopup();
-        } catch (e) {
-            console.log(e)
+        } catch (e: unknown) {
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 
@@ -106,7 +122,6 @@ function Dashboard() {
         copySelectedBoardWithColumns.columns[columnIndex].cards.splice(cardIndex, 1);
         try {
             await updateBoard(copySelectedBoardWithColumns);
-            dispatch(setBoardWithColumns(copySelectedBoardWithColumns));
             closePopup();
         } catch (e) {
             console.log(e)
@@ -156,4 +171,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default memo(Dashboard);

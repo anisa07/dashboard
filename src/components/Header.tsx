@@ -11,7 +11,7 @@ interface HeaderProps {
     onOpenCreateTicketPopup: () => void,
 }
 
-export const Header = ({ toggleSettings, onOpenCreateTicketPopup }: HeaderProps) => {
+export function Header({ toggleSettings, onOpenCreateTicketPopup }: HeaderProps) {
     const { bg1, borderColor } = useThemeHook();
     const selectedBoard = useAppSelector(selectCurrentBoard);
     const editableBoard = () => selectedBoard?.admins?.includes(getUserFromSessionStorage().email);
