@@ -5,6 +5,11 @@ Used firebase for auth and database
 
 ### deployed to gh-pages https://anisa07.github.io/dashboard/#/dashboard/
 
+### Workflow
+Every person can signup or login.
+A user could be added as a watcher or admin, who allowed to edit board
+An admin can delete, update, create, a watcher can only read. 
+
 ## Available Scripts
 
 ### For these scripts firebase variables are required
@@ -18,3 +23,4 @@ Open [http://localhost:3000/#/](http://localhost:3000/#/) to view it in the brow
 ### `npm build`
 
 Build app
+
