@@ -1,6 +1,6 @@
 ## Implemented design and behavior from 
 https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB
-![mockup](https://myoctocat.com/assets/images/base-octocat.svg)
+![mockup](https://github.com/anisa07/dashboard/blob/main/public/design.png)
 Used firebase for auth and database
 
 ## Available Scripts
