@@ -2,6 +2,7 @@
   "name": "assignment-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://anisa07.github.io",
   "dependencies": {
     "@chakra-ui/icons": "2.0.4",
     "@chakra-ui/react": "2.2.4",
@@ -33,6 +34,8 @@
     "web-vitals": "2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -b main -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -58,6 +61,7 @@
   },
   "devDependencies": {
     "@types/styled-components": "5.1.25",
-    "@types/uuid": "8.3.4"
+    "@types/uuid": "8.3.4",
+    "gh-pages": "^4.0.0"
   }
 }
