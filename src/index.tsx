@@ -4,7 +4,6 @@ import {ChakraProvider, ColorModeScript} from '@chakra-ui/react';
 import Dashboard from './pages/Dashboard';
 import reportWebVitals from './reportWebVitals';
 import {
-    BrowserRouter,
     HashRouter,
     Routes,
     Route,
@@ -23,6 +22,7 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 function CustomRoutes() {
+    // local start route http://localhost:3000/#/dashboard/login
     return <Routes>
         <Route path="/" element={<Dashboard/>}/>
         <Route path="/:id" element={<Dashboard/>}/>
