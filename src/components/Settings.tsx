@@ -23,11 +23,11 @@ import {
 import {useNavigate} from "react-router-dom";
 import {logout} from "../services/authService";
 import {Board as BoardType, Board, Mode} from "../types/dataTypes";
-import {v4 as uuidv4} from "uuid";
 import {deleteBoard, saveBoard, updateBoard} from "../services/boardService";
 import {deepCloneOfItem, getErrorMessage} from "../helpers/helperFunc";
 import {getUserFromSessionStorage} from "../services/sessionService";
 import {useAlert} from "../hooks/useAlert";
+import { v4 as uuidv4 } from 'uuid';
 
 interface SettingsProps {
     onCloseSettings: () => void;

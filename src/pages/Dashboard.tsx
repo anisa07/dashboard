@@ -38,7 +38,6 @@ function Dashboard() {
         const userExists = !!getUserFromSessionStorage();
         if (userExists) {
             fetchBoardNames().then((boardsList: BoardType[]) => {
-                console.log(boardsList)
                 store.dispatch({type: 'board/setBoardNamesList', payload: boardsList})
             }).catch((e: unknown) => {
                 openAlert(getErrorMessage(e), 'error')
@@ -124,7 +123,7 @@ function Dashboard() {
             await updateBoard(copySelectedBoardWithColumns);
             closePopup();
         } catch (e) {
-            console.log(e)
+            openAlert(getErrorMessage(e), 'error')
         }
     }
 

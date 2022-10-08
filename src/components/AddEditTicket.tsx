@@ -46,7 +46,7 @@ export const AddEditTicket = () => {
     }
 
     const handleDeleteCard = () => {
-        onDeleteCard(cardId, ticketStatus)
+        onDeleteCard(cardId, prevColumnId)
     }
 
     const handleSubmitTicket = () => {

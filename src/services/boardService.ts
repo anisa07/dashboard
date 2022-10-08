@@ -27,7 +27,6 @@ export const fetchBoardData = async (boardId: string) => {
     try {
         onSnapshot(doc(db, "boards", boardId), (doc) => {
             const boardData: Board = doc.data() as Board;
-            console.log("Current data: ", doc.data());
             store.dispatch({type: 'board/setBoardWithColumns', payload: boardData})
         });
     } catch (e: unknown) {
