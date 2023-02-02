@@ -10,7 +10,7 @@ interface FormInputProps {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-export const FormInput = ({formElement, name, label, type,  onChange}: FormInputProps) => {
+export const FormInput = ({formElement, name, label, type, onChange}: FormInputProps) => {
     const { value, error, errorMessage } = formElement;
 
     return <FormControl my={4}>

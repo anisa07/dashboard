@@ -45,14 +45,15 @@ export const signup = async ({email, password, name}: User) => {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
         const accessToken = await user.getIdToken();
-        saveUserToSessionStorage({email, accessToken, uid: user.uid});
         await addDoc(collection(db, "users"), {
             uid: user.uid,
             name,
             authProvider: "local",
             email
         });
+        saveUserToSessionStorage({email, accessToken, uid: user.uid});
     } catch (err: unknown) {
+        console.log(err)
         if (getErrorMessage(err).includes('auth/email-already-in-use')) {
             throw new Error("Email already in use");
         }

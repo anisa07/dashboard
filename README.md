@@ -24,3 +24,12 @@ Open [http://localhost:3000/#/](http://localhost:3000/#/) to view it in the brow
 
 Build app
 
+Example users
+
+user with admin rule
+alice@test.io
+Test1234
+
+user without admin rule
+jake@test.io
+Test1234

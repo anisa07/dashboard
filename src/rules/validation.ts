@@ -18,6 +18,10 @@ export function ensureNotEmpty(value: ValidationArgs): ValidationResult {
     return returnValidationResult((value as string).length === 0, 'Required');
 }
 
+export function ensureNotTooShortPassword(value: ValidationArgs): ValidationResult {
+    return returnValidationResult((value as string).length < 6, 'Required length is at least 6');
+}
+
 export function ensureMaxLength(value: ValidationArgs): ValidationResult {
     return returnValidationResult((value as string).length > MAX_LENGTH, 'Description is too long');
 }

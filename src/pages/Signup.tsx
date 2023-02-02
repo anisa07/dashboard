@@ -1,7 +1,7 @@
 import {Button, Flex, Box, Text} from "@chakra-ui/react"
 import {useFormCustomHook} from "../hooks/useFormHook";
 import {FormDataType} from "../types/validationTypes";
-import {ensureEmail, ensureNotEmpty, ensurePasswordsAreEqual} from "../rules/validation";
+import {ensureEmail, ensureNotEmpty, ensureNotTooShortPassword, ensurePasswordsAreEqual} from "../rules/validation";
 import {colors} from "../styles/themes";
 import {FormEvent, useEffect} from "react";
 import {FormInput} from "../components/FormInput";
@@ -29,7 +29,7 @@ export function Signup () {
             errorMessage: "",
             value: "",
             error: false,
-            validation: [ensureNotEmpty]
+            validation: [ensureNotEmpty, ensureNotTooShortPassword]
         },
         newPassword: {
             errorMessage: "",
